@@ -1,3 +1,11 @@
-<h1>
-  Your lucky number is {{ number }}
-</h1>
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <h1 class="text-3xl font-bold underline">
+    Hello world!
+  </h1>
+
+  <div>
+    Your lucky number is {{ number }}
+  </div>
+{% endblock %}

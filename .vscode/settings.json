@@ -11,7 +11,8 @@
   // Twig
   "files.associations": {
     "*.html": "twig",
-    "*.twig": "twig"
+    "*.twig": "twig",
+    "*.css": "tailwindcss"
   },
   "emmet.includeLanguages": {
     "twig": "html"
