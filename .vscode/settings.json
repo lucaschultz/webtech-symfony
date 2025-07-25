@@ -2,7 +2,18 @@
   // Formatting
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.requireConfig": true,
+  "prettier.documentSelectors": ["**/*.twig", "**/*.php"],
   "[twig][php][typescript][javascript][css][json][jsonc][yaml][markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Twig
+  "files.associations": {
+    "*.html": "twig",
+    "*.twig": "twig"
+  },
+  "emmet.includeLanguages": {
+    "twig": "html"
   }
 }
