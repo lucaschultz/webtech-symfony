@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "format": "prettier --write \"**/*.{php,twig,js,css,json,yaml,yml}\"",
-    "lint:spelling": "cspell ."
+    "spellcheck": "cspell .",
+    "spellcheck:baseline": "cspell '**' --words-only --unique > project-words.txt"
   },
   "keywords": [],
   "author": "Luca Schultz",

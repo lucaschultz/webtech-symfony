@@ -40,3 +40,28 @@ by using:
 ```bash
 php bin/console tailwind:build --watch
 ```
+
+## Commit Guidelines
+
+Make sure to run the formatting and spellcheck commands before committing your
+changes:
+
+```bash
+pnpm run format
+pnpm run spellcheck
+```
+
+Commit messages should follow the conventional commit format that is described
+in the
+[Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
+
+### Configuration Word Spelling Errors
+
+You might encounter spelling errors in the configuration files after installing
+a new package. If the **only** errors are technical terms such as `javascripts`,
+`phpstan`, or `healthcheck`, you can bulk add them to the `project-words.txt`
+file by running:
+
+```bash
+pnpm run spellcheck:baseline
+```
