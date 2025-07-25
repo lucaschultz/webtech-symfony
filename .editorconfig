@@ -5,13 +5,13 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 4
+indent_size = 2
+max_line_length = 80
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[{compose.yaml,compose.*.yaml}]
-indent_size = 2
-
 [*.md]
-trim_trailing_whitespace = false
+max_line_length = 80
+trim_trailing_whitespace = false  # Trailing spaces are used for line breaks
+

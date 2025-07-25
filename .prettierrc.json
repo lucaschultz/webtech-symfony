@@ -1,0 +1,14 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "semi": true,
+  "braceStyle": "1tbs",
+  "proseWrap": "always",
+  "plugins": [
+    "./node_modules/prettier-plugin-twig-melody",
+    "./node_modules/@prettier/plugin-php"
+  ]
+}
