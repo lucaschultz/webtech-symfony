@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write \"**/*.{php,twig,js,css,json,yaml,yml}\""
+    "format": "prettier --write \"**/*.{php,twig,js,css,json,yaml,yml}\"",
+    "lint:spelling": "cspell ."
   },
   "keywords": [],
   "author": "Luca Schultz",
@@ -12,6 +13,7 @@
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
     "@prettier/plugin-php": "0.19.6",
+    "cspell": "^9.2.0",
     "prettier": "~2.8.8",
     "prettier-plugin-twig-melody": "^0.4.6"
   }
