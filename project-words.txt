@@ -21,10 +21,12 @@ phpstan
 phpunit
 PHPUNIT
 savepoints
+stof
 stylesheet
 symfony
 Symfony
 Symfony's
 texter
+timestampable
 webtech
 Webtech

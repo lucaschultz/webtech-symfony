@@ -21,4 +21,7 @@ return [
   Symfonycasts\TailwindBundle\SymfonycastsTailwindBundle::class => [
     "all" => true,
   ],
+  Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => [
+    "all" => true,
+  ],
 ];
