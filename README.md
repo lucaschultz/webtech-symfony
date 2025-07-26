@@ -112,3 +112,5 @@ pnpm run spellcheck:baseline
   extensively used for the database schema.
 - [Doctrine Extensions](https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html)
   used e.g. for automatic time stamps.
+- [Symfony Translation Docs](https://symfony.com/doc/current/translation.html)
+  used for translations in the application.
