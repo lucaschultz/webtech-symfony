@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-white">
   <head>
     <meta charset="UTF-8" />
 
@@ -14,12 +14,14 @@
     {% endblock %}
 
     {% block javascripts %}
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+        type="module"></script>
       {% block importmap %}
         {{ importmap('app') }}
       {% endblock %}
     {% endblock %}
   </head>
-  <body>
+  <body class="h-full">
     {% block body %}
 
     {% endblock %}
