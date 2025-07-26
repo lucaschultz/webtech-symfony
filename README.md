@@ -93,7 +93,22 @@ pnpm run spellcheck:baseline
 ## Links
 
 - [Database Schema](https://dbdiagram.io/d/StudiBonnTask-6883889bcca18e685cc0e682)
-- [TailwindUI](https://tailwindcss.com/plus/ui-blocks/marketing)
+  of the application.
+- [Tailwind Bundle](https://symfony.com/bundles/TailwindBundle/current/index.html)
+  used for styling the application.
+- [Symfony Forms](https://symfony.com/doc/current/forms.html) used for forms in
+  the application.
+- [Tailwind Form Theme](https://symfony.com/doc/current/form/tailwindcss.html)
+  we might wanna use this to style the forms?
+- [TailwindUI](https://tailwindcss.com/plus/ui-blocks/marketing) used as
+  inspiration for the user interface.
+- [Symfony Database Docs](https://symfony.com/doc/current/doctrine.html) used
+  for setting up the database and entities.
 - [Symfony User Authentication](https://symfony.com/doc/current/security.html#authenticating-users)
+  used for user authentication and registration.
 - [Symfony Notifications](https://symfony.com/doc/current/session.html#installation)
+  used for the notification system.
 - [Symfony Relations](https://symfony.com/doc/current/doctrine/associations.html)
+  extensively used for the database schema.
+- [Doctrine Extensions](https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html)
+  used e.g. for automatic time stamps.
