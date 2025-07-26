@@ -2,7 +2,6 @@
   "name": "webtech-symfony",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "dev": "symfony server:start --no-tls",
     "dc:up": "docker-compose up -d --remove-orphans",

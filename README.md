@@ -1,7 +1,8 @@
 # Webtech Symfony
 
 This repository contains the code for the project required as part of the
-Webtech course BA-INF 162 Web Technologies at the University of Bonn.
+Webtech course BA-INF 162 Web Technologies at the University of Bonn. Check out
+the tasks in the [TASKS.md](TASKS.md) file to see what we are working on.
 
 ## Installation
 
@@ -88,3 +89,11 @@ file by running:
 ```bash
 pnpm run spellcheck:baseline
 ```
+
+## Links
+
+- [Database Schema](https://dbdiagram.io/d/StudiBonnTask-6883889bcca18e685cc0e682)
+- [TailwindUI](https://tailwindcss.com/plus/ui-blocks/marketing)
+- [Symfony User Authentication](https://symfony.com/doc/current/security.html#authenticating-users)
+- [Symfony Notifications](https://symfony.com/doc/current/session.html#installation)
+- [Symfony Relations](https://symfony.com/doc/current/doctrine/associations.html)
