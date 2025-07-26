@@ -2,10 +2,10 @@
 
 {% block body %}
   <h1 class="text-3xl font-bold underline">
-    Hello world!
+    {{ 'welcome'|trans }}
   </h1>
 
   <div>
-    Your lucky number is {{ number }}
+    {{ 'lucky_number'|trans }}: {{ number }}
   </div>
 {% endblock %}
