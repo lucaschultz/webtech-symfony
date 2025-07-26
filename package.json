@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "symfony server:start --no-tls",
     "format": "prettier --write --list-different \"**/*.{php,twig,js,css,json,yaml,yml}\"",
     "format:check": "prettier --list-different \"**/*.{php,twig,js,css,json,yaml,yml}\"",
     "spellcheck": "cspell .",
