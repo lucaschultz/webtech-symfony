@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write \"**/*.{php,twig,js,css,json,yaml,yml}\"",
+    "format": "prettier --write --list-different \"**/*.{php,twig,js,css,json,yaml,yml}\"",
+    "format:check": "prettier --list-different \"**/*.{php,twig,js,css,json,yaml,yml}\"",
     "spellcheck": "cspell .",
     "spellcheck:baseline": "cspell '**' --words-only --unique > project-words.txt"
   },
