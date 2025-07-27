@@ -1,0 +1,109 @@
+<script>
+  document.addEventListener('DOMContentLoaded', function() { const flashMessages
+  = document.querySelectorAll('[data-flash-message]');
+
+  flashMessages.forEach(function(message) { setTimeout(function() {
+  message.remove(); }, 5000); }); });
+</script>
+
+<div aria-live="assertive"
+  class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
+  <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div data-flash-message
+          class="pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg ring-1 ring-black/5 transition duration-300 ease-out sm:translate-x-0">
+          <div class="p-4">
+            <div class="flex items-center">
+              <div class="flex w-0 flex-1 gap-2 items-center">
+                {% if label == 'warning' %}
+                  <svg width="20"
+                    class="text-yellow-500"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 5.625C10.4142 5.625 10.75 5.96079 10.75 6.375V10.375C10.75 10.7892 10.4142 11.125 10 11.125C9.58579 11.125 9.25 10.7892 9.25 10.375V6.375C9.25 5.96079 9.58579 5.625 10 5.625Z"
+                      fill="currentColor" />
+                    <path d="M11 13.375C11 13.9273 10.5523 14.375 10 14.375C9.44771 14.375 9 13.9273 9 13.375C9 12.8227 9.44771 12.375 10 12.375C10.5523 12.375 11 12.8227 11 13.375Z"
+                      fill="currentColor" />
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 2.38462C5.79414 2.38462 2.38462 5.79414 2.38462 10C2.38462 14.2059 5.79414 17.6154 10 17.6154C14.2059 17.6154 17.6154 14.2059 17.6154 10C17.6154 5.79414 14.2059 2.38462 10 2.38462ZM1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10Z"
+                      fill="currentColor" />
+                  </svg>
+                {% elseif label == 'success' %}
+                  <svg width="20"
+                    class="text-green-500"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1ZM2.51285 10C2.51285 5.86496 5.86496 2.51285 10 2.51285C14.135 2.51285 17.4872 5.86496 17.4872 10C17.4872 14.135 14.135 17.4872 10 17.4872C5.86496 17.4872 2.51285 14.135 2.51285 10Z"
+                      fill="currentColor" />
+                    <path d="M13.2349 7.55024C12.9015 7.29309 12.4228 7.35486 12.1657 7.6882L9.15079 11.5964L7.78546 10.1484C7.49664 9.84203 7.01419 9.82784 6.70786 10.1167C6.40154 10.4055 6.38735 10.8879 6.67617 11.1943L8.08436 12.6878C8.20123 12.8119 8.3376 12.9567 8.47093 13.0632C8.62979 13.1901 8.88712 13.3486 9.23666 13.3313C9.5862 13.314 9.82663 13.1309 9.97217 12.9889C10.0943 12.8697 10.2157 12.7122 10.3198 12.5772L13.3729 8.61944C13.63 8.2861 13.5682 7.8074 13.2349 7.55024Z"
+                      fill="currentColor" />
+                  </svg>
+                {% elseif label == 'info' %}
+                  <svg width="20"
+                    class="text-blue-500"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 2.38462C5.79414 2.38462 2.38462 5.79414 2.38462 10C2.38462 14.2059 5.79414 17.6154 10 17.6154C14.2059 17.6154 17.6154 14.2059 17.6154 10C17.6154 5.79414 14.2059 2.38462 10 2.38462ZM1 10C1 5.02944 5.02944 1 10 1C14.9706 1 19 5.02944 19 10C19 14.9706 14.9706 19 10 19C5.02944 19 1 14.9706 1 10Z"
+                      fill="currentColor" />
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 14.375C9.58579 14.375 9.25 14.0392 9.25 13.625V9.625C9.25 9.21079 9.58579 8.875 10 8.875C10.4142 8.875 10.75 9.21079 10.75 9.625V13.625C10.75 14.0392 10.4142 14.375 10 14.375Z"
+                      fill="currentColor" />
+                    <path d="M9 6.625C9 6.07272 9.44772 5.625 10 5.625C10.5523 5.625 11 6.07272 11 6.625C11 7.17728 10.5523 7.625 10 7.625C9.44772 7.625 9 7.17728 9 6.625Z"
+                      fill="currentColor" />
+                  </svg>
+                {% elseif label == 'error' %}
+                  <svg width="20"
+                    class="text-red-500"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.3668 7.63323C12.0714 7.33783 11.5924 7.33783 11.297 7.63323L10 8.93026L8.70298 7.63323C8.40757 7.33783 7.92863 7.33783 7.63323 7.63323C7.33783 7.92863 7.33783 8.40758 7.63323 8.70298L8.93026 10L7.63323 11.297C7.33783 11.5924 7.33783 12.0714 7.63323 12.3668C7.92863 12.6622 8.40757 12.6622 8.70298 12.3668L10 11.0698L11.297 12.3668C11.5924 12.6622 12.0714 12.6622 12.3668 12.3668C12.6622 12.0714 12.6622 11.5924 12.3668 11.297L11.0698 10L12.3668 8.70298C12.6622 8.40757 12.6622 7.92863 12.3668 7.63323Z"
+                      fill="currentColor" />
+                    <path fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1ZM2.51285 10C2.51285 5.86496 5.86496 2.51285 10 2.51285C14.135 2.51285 17.4872 5.86496 17.4872 10C17.4872 14.135 14.135 17.4872 10 17.4872C5.86496 17.4872 2.51285 14.135 2.51285 10Z"
+                      fill="currentColor" />
+                  </svg>
+                {% endif %}
+
+                <p class="w-0 flex-1 text-sm font-medium text-gray-900">
+                  {{ message }}
+                </p>
+              </div>
+              <div class="ml-4 flex shrink-0">
+                <button type="button"
+                  onclick="this.closest('.flash-message').remove()"
+                  class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden">
+                  <span class="sr-only">Close</span>
+                  <svg viewBox="0 0 20 20"
+                    fill="currentColor"
+                    data-slot="icon"
+                    aria-hidden="true"
+                    class="size-5">
+                    <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
