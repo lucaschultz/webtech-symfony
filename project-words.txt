@@ -16,6 +16,7 @@ Luca
 mailpit
 mercure
 nexmo
+nowrap
 phpdoc
 phpdocumentor
 phpstan
@@ -29,5 +30,6 @@ Symfony
 Symfony's
 texter
 timestampable
+Upgrader
 webtech
 Webtech

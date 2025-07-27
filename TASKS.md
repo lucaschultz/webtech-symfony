@@ -7,7 +7,7 @@ to a team member:
 - [ ] Team Entities + CRUD/Join (Ahmad)
 - [ ] Task Entities + CRUD + Assignments (Luca)
 - [ ] Comment Entities + CR (Ahmad)
-- [ ] Notification Entities + CR (Notifications)
+- [ ] Notification Entities + CR (Luca)
 - [ ] Dashboard Page (Luca)
 
 ## Task Breakdown
@@ -20,6 +20,12 @@ and document the process of implementing them.
 ## Task 2: Team Entities + CRUD/Join
 
 ## Task 3: Task Entities + CRUD + Assignments
+
+1. Create the `Task` entity with necessary fields and relations using
+   `php bin/console make:entity` command.
+2. Add `TaskController` with `php bin/console make:controller ProductController`
+   command.
+3.
 
 ## Task 4: Comment Entities + CR
 
