@@ -5,6 +5,7 @@ chromephp
 ctype
 dbname
 firephp
+Gedmo
 hashers
 healthcheck
 hotwired
