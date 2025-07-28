@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body %}
+  <div class="min-h-screen flex flex-col items-center justify-center bg-white space-y-8">
+    <h1 class="text-2xl font-bold mb-6">
+      Welcome to StudiBonnTask
+    </h1>
+    {% if app.user %}
+      <div>
+        You are logged in as <span class="font-semibold text-indigo-600">{{
+            app.user.userIdentifier
+          }}</span>
+      </div>
+      <a href="{{ path('app_logout') }}"
+        class="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 max-w-xs">
+        Logout
+      </a>
+    {% else %}
+      <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
+        <a href="{{ path('app_login') }}"
+          class="flex-1 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Login
+        </a>
+        <a href="{{ path('app_register') }}"
+          class="flex-1 flex justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+          Register
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
