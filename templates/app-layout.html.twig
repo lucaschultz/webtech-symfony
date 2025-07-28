@@ -330,50 +330,43 @@
             </ul>
           </li>
 
-          <li class="-mx-6 mt-auto mb-16">
-  <el-dropdown class="w-full">
-    <button class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 w-full">
-      <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default('U') }}+{{ app.user.lastName|default('ser') }}&background=4f46e5&color=fff"
-        alt="{{ app.user.firstName|default('User') }}"
-        class="size-8 rounded-full bg-gray-50" />
-      <span>
-        {{ app.user.firstName|default('User') }} {{ app.user.lastName|default('') }}
-      </span>
-      <svg class="size-4 ml-auto" viewBox="0 0 20 20" fill="none">
-        <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <el-menu anchor="top start" popover class="w-72 origin-bottom-left rounded-md bg-white shadow-lg ring-1 ring-black/5 transition transition-discrete">
-      <div class="py-1">
-        <form id="logout-form-sidebar" action="{{ path('app_logout') }}" method="post">
-          <button type="submit"
-                  class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-            Logout
-          </button>
-        </form>
-      </div>
-    </el-menu>
-  </el-dropdown>
-</li>
-
-
-          {# <li class="-mx-6 mt-auto mb-8">
-            <a href="#"
-              class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50">
-              <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
-                  'U'
-                ) }}+{{ app.user.lastName|default(
-                  'ser'
-                ) }}&background=4f46e5&color=fff"
-                alt="{{ app.user.firstName|default('User') }}"
-                class="size-8 rounded-full bg-gray-50" />
-              <span class="sr-only">Your profile</span>
-              <span aria-hidden="true">
-                {{ app.user.firstName|default('User') }}
-                {{ app.user.lastName|default('') }}
-              </span>
-            </a>
-          </li> #}
+          <li class="-mx-6 mt-auto mb-8">
+            <el-dropdown class="w-full">
+              <button class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 w-full">
+                <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
+                    'U'
+                  ) }}+{{ app.user.lastName|default(
+                    'ser'
+                  ) }}&background=4f46e5&color=fff"
+                  alt="{{ app.user.firstName|default('User') }}"
+                  class="size-8 rounded-full bg-gray-50" />
+                <span>
+                  {{ app.user.firstName|default('User') }}
+                  {{ app.user.lastName|default('') }}
+                </span>
+                <svg class="size-4 ml-auto" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+              <el-menu anchor="top start"
+                popover
+                class="w-72 origin-bottom-left rounded-md bg-white shadow-lg ring-1 ring-black/5 transition transition-discrete">
+                <div class="py-1">
+                  <form id="logout-form-sidebar"
+                    action="{{ path('app_logout') }}"
+                    method="post">
+                    <button type="submit"
+                      class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                      Logout
+                    </button>
+                  </form>
+                </div>
+              </el-menu>
+            </el-dropdown>
           </li>
         </ul>
       </nav>
