@@ -23,6 +23,7 @@ phpstan
 phpunit
 PHPUNIT
 savepoints
+setval
 stof
 stylesheet
 symfony

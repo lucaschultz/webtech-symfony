@@ -1,18 +1,9 @@
-<script>
-  document.addEventListener('DOMContentLoaded', function() { const flashMessages
-  = document.querySelectorAll('[data-flash-message]');
-
-  flashMessages.forEach(function(message) { setTimeout(function() {
-  message.remove(); }, 5000); }); });
-</script>
-
 <div aria-live="assertive"
-  class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
+  class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:py-12 sm:px-6">
   <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
     {% for label, messages in app.flashes %}
       {% for message in messages %}
-        <div data-flash-message
-          class="pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg ring-1 ring-black/5 transition duration-300 ease-out sm:translate-x-0">
+        <div class="pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg ring-1 ring-black/5 transition duration-300 ease-out sm:translate-x-0 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0 flash-message">
           <div class="p-4">
             <div class="flex items-center">
               <div class="flex w-0 flex-1 gap-2 items-center">

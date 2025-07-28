@@ -3,15 +3,18 @@
 namespace App\Repository;
 
 use App\Entity\Task;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @extends ServiceEntityRepository<Task>
+ * @extends BaseRepository<Task>
  */
-class TaskRepository extends ServiceEntityRepository {
-  public function __construct(ManagerRegistry $registry) {
-    parent::__construct($registry, Task::class);
+class TaskRepository extends BaseRepository {
+  public function __construct(
+    ManagerRegistry $registry,
+    TranslatorInterface $translator
+  ) {
+    parent::__construct($registry, Task::class, $translator);
   }
 
   //    /**

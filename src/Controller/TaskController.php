@@ -2,8 +2,15 @@
 
 namespace App\Controller;
 
-use App\Constant\TaskFilterType;
+use App\Constant\TaskPriority;
+use App\Constant\TaskStatus;
+use App\Entity\Task;
+use App\Form\TaskEditType;
+use App\Form\TaskNewType;
+use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use App\Service\RedirectService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,50 +18,201 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class TaskController extends AbstractController {
   #[Route("/tasks", name: "app_tasks_list")]
-  public function list(UserRepository $userRepository): Response {
-    $user = $userRepository->findOrFail(1);
-    $tasks = $user->getAssignedTasks();
+  public function list(
+    Request $request,
+    TaskRepository $taskRepository
+  ): Response {
+    $sortBy = $request->query->get("sort", "title"); // default sort by title
+    $sortDirection = $request->query->get("direction", "asc"); // default ascending
 
-    $this->addFlash("warning", "This action cannot be undone.");
+    $allowedSortFields = [
+      "title",
+      "status",
+      "priority",
+      "deadline",
+      "createdAt",
+    ];
+    if (!in_array($sortBy, $allowedSortFields)) {
+      $sortBy = "title";
+    }
+
+    if (!in_array($sortDirection, ["asc", "desc"])) {
+      $sortDirection = "asc";
+    }
+
+    $tasks = $taskRepository->findBy(
+      // TODO: Replace with actual user logic
+      ["assignedTo" => 1],
+      [$sortBy => $sortDirection]
+    );
 
     return $this->render("task/list.html.twig", [
       "tasks" => $tasks,
+      "currentSort" => $sortBy,
+      "currentDirection" => $sortDirection,
     ]);
-  }
-
-  #[Route("/tasks/{taskId}", name: "app_task_show")]
-  public function show(): Response {
-    return new Response("Hello");
-  }
-
-  #[Route("/tasks/{taskId}/status", name: "app_task_status", methods: ["POST"])]
-  public function status(): Response {
-    return new Response("Status update");
   }
 
   #[
     Route(
-      "/tasks/{taskId}/priority",
+      "/tasks/{taskId}",
+      name: "app_task_show",
+      methods: ["GET"],
+      requirements: ["taskId" => "\d+"]
+    )
+  ]
+  public function show(int $taskId, TaskRepository $taskRepository): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    return $this->render("task/show.html.twig", [
+      "task" => $task,
+    ]);
+  }
+
+  #[
+    Route(
+      "/tasks/{taskId}/status/{status}",
+      name: "app_task_status",
+      methods: ["POST"]
+    )
+  ]
+  public function updateStatus(
+    Request $request,
+    int $taskId,
+    string $status,
+    TaskRepository $taskRepository,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService
+  ): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    try {
+      $taskStatus = TaskStatus::from($status);
+      $task->setStatus($taskStatus);
+      $entityManager->flush();
+
+      $this->addFlash("success", "Task status updated successfully");
+    } catch (\ValueError $e) {
+      $this->addFlash("error", "Invalid status value");
+    }
+
+    return $redirectService->safeRedirect($request);
+  }
+
+  #[
+    Route(
+      "/tasks/{taskId}/priority/{priority}",
       name: "app_task_priority",
       methods: ["POST"]
     )
   ]
-  public function priority(): Response {
-    return new Response("Priority update");
+  public function updatePriority(
+    Request $request,
+    int $taskId,
+    string $priority,
+    TaskRepository $taskRepository,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService
+  ): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    try {
+      $taskPriority = TaskPriority::from($priority);
+      $task->setPriority($taskPriority);
+      $entityManager->flush();
+
+      $this->addFlash("success", "Task priority updated successfully");
+    } catch (\ValueError $e) {
+      $this->addFlash("error", "Invalid priority value");
+    }
+
+    return $redirectService->safeRedirect($request);
   }
 
-  #[Route("/tasks/{taskId}/update", name: "app_task_update", methods: ["POST"])]
-  public function update(): Response {
-    return new Response("Task update");
+  #[
+    Route(
+      "/tasks/{taskId}/edit",
+      name: "app_task_update",
+      methods: ["GET", "POST"]
+    )
+  ]
+  public function update(
+    Request $request,
+    int $taskId,
+    TaskRepository $taskRepository,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService
+  ): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    $form = $this->createForm(TaskEditType::class, $task);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $entityManager->flush();
+
+      $this->addFlash("success", "Task updated successfully");
+
+      return $redirectService->safeRedirect($request, "app_task_show", [
+        "taskId" => $task->getId(),
+      ]);
+    }
+
+    return $this->render("task/edit.html.twig", [
+      "task" => $task,
+      "form" => $form,
+    ]);
   }
 
   #[Route("/tasks/{taskId}/delete", name: "app_task_delete", methods: ["POST"])]
-  public function delete(): Response {
-    return new Response("Task delete");
+  public function delete(
+    Request $request,
+    int $taskId,
+    TaskRepository $taskRepository,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService
+  ): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    $entityManager->remove($task);
+    $entityManager->flush();
+
+    $this->addFlash("success", "Task deleted successfully");
+
+    return $redirectService->safeRedirect($request, "app_tasks_list");
   }
 
-  #[Route("/tasks/create", name: "app_task_create")]
-  public function create(): Response {
-    return new Response("Create task");
+  #[Route("/tasks/new", name: "app_task_new", methods: ["GET", "POST"])]
+  public function new(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService,
+    UserRepository $userRepository
+  ): Response {
+    $user = $userRepository->findOrFail(1);
+    $task = new Task();
+
+    $task->setCreatedBy($this->getUser());
+    $task->setStatus(TaskStatus::Todo);
+    $task->setPriority(TaskPriority::Medium);
+    $task->setCreatedBy($user);
+
+    $form = $this->createForm(TaskNewType::class, $task);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $entityManager->persist($task);
+      $entityManager->flush();
+
+      $this->addFlash("success", "Task created successfully");
+
+      return $redirectService->safeRedirect($request, "app_task_show", [
+        "taskId" => $task->getId(),
+      ]);
+    }
+
+    return $this->render("task/new.html.twig", [
+      "form" => $form,
+    ]);
   }
 }
