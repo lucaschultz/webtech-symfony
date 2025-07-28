@@ -22,8 +22,8 @@ class TaskController extends AbstractController {
     Request $request,
     TaskRepository $taskRepository
   ): Response {
-    $sortBy = $request->query->get("sort", "title"); // default sort by title
-    $sortDirection = $request->query->get("direction", "asc"); // default ascending
+    $sortBy = $request->query->get("sort", "title");
+    $sortDirection = $request->query->get("direction", "asc");
 
     $allowedSortFields = [
       "title",
@@ -41,8 +41,7 @@ class TaskController extends AbstractController {
     }
 
     $tasks = $taskRepository->findBy(
-      // TODO: Replace with actual user logic
-      ["assignedTo" => 1],
+      ["assignedTo" => $this->getUser()],
       [$sortBy => $sortDirection]
     );
 
@@ -186,16 +185,13 @@ class TaskController extends AbstractController {
   public function new(
     Request $request,
     EntityManagerInterface $entityManager,
-    RedirectService $redirectService,
-    UserRepository $userRepository
+    RedirectService $redirectService
   ): Response {
-    $user = $userRepository->findOrFail(1);
     $task = new Task();
 
     $task->setCreatedBy($this->getUser());
     $task->setStatus(TaskStatus::Todo);
     $task->setPriority(TaskPriority::Medium);
-    $task->setCreatedBy($user);
 
     $form = $this->createForm(TaskNewType::class, $task);
     $form->handleRequest($request);
