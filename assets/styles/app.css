@@ -18,7 +18,7 @@
   }
 
   .btn-style-ghost {
-    @apply text-sm/6 text-gray-900 whitespace-nowrap text-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-gray-950/7.5 focus-visible:bg-gray-950/7.5;
+    @apply text-sm/6 text-indigo-900 whitespace-nowrap text-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-indigo-500/5 focus-visible:bg-indigo-500/5;
   }
 
   .btn-style-primary {

@@ -1,0 +1,173 @@
+{% extends 'app-layout.html.twig' %}
+
+{% block content %}
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
+    <div class="flex-auto max-w-2xl text-pretty">
+      <h1 class="text-base font-semibold text-gray-900">
+        Notifications
+      </h1>
+      <p class="mt-2 text-base text-gray-600">
+        Stay updated with all your important notifications. You can mark them as
+        read or delete them as needed.
+      </p>
+    </div>
+
+    {% if notifications is not empty %}
+      <el-dropdown class="dropdown">
+        <button class="btn-style-primary btn-size-md">Actions</button>
+        <el-menu anchor="bottom end" popover class="dropdown-menu">
+          <form method="POST"
+            action="{{ path('app_notification_mark_all_read') }}">
+            <button type="submit" class="dropdown-item w-full text-left">
+              Mark All Read
+            </button>
+          </form>
+          <button command="show-modal"
+            commandfor="delete-all-dialog"
+            class="dropdown-item-destructive">
+            Delete All
+          </button>
+        </el-menu>
+      </el-dropdown>
+    {% endif %}
+  </div>
+
+  {% if notifications is empty %}
+    <div class="mt-8">
+      <div class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          class="mx-auto size-12 text-gray-400"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+        </svg>
+        <span class="mt-2 block text-sm font-semibold text-gray-900">
+          No notifications yet
+        </span>
+        <span class="mt-1 block text-sm text-gray-600">
+          You'll see your notifications here when you receive them.
+        </span>
+      </div>
+    </div>
+  {% else %}
+    <div class="mt-8">
+      <ul role="list">
+        {% for notification in notifications %}
+          <li class="relative hover:rounded-2xl border-b first:border-t border-gray-200 [:has(+:hover)]:border-b-transparent hover:border-transparent hover:bg-indigo-500/5">
+            <form method="POST"
+              action="{{
+              path(
+                'app_notification_mark_read',
+                {
+                  id: notification.id
+                }
+              )
+              }}">
+              <button type="submit"
+                class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 px-4 sm:flex-nowrap w-full text-left bg-transparent border-0 cursor-pointer">
+                <div class="flex items-center flex-1 min-w-0 gap-3">
+                  {% if not notification.isRead %}
+                    <div class="size-2 bg-indigo-600 rounded-full flex-shrink-0"></div>
+                  {% else %}
+                    <div class="size-2 flex-shrink-0"></div>
+                  {% endif %}
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm/6 font-semibold {{
+                      notification.isRead
+                        ? 'text-gray-600'
+                        : 'text-gray-900'
+                      }}">
+                      {{ notification.message }}
+                    </p>
+                    <div class="mt-1 flex items-center gap-x-2 text-xs/5 text-gray-500">
+                      <p>
+                        <time datetime="{{ notification.createdAt|date('c') }}">
+                          {{ notification.createdAt|ago }}
+                        </time>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    class="size-4 text-gray-400">
+                    <path fill-rule="evenodd"
+                      d="M6.22 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L8.94 8 6.22 5.28a.75.75 0 0 1 0-1.06Z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {# Delete All Confirmation Modal #}
+  {% if notifications is not empty %}
+    <el-dialog>
+      <dialog id="delete-all-dialog"
+        aria-labelledby="dialog-title-delete-all"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop class="backdrop"></el-dialog-backdrop>
+        <div tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+          <el-dialog-panel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-100 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
+                  <svg viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    data-slot="icon"
+                    aria-hidden="true"
+                    class="size-6 text-red-600">
+                    <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 id="dialog-title-delete-all"
+                    class="text-base font-semibold text-gray-900">
+                    Delete All Notifications
+                  </h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-600">
+                      Are you sure you want to delete all notifications? This
+                      action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-3 flex flex-col justify-end sm:flex-row sm:px-6 gap-2">
+              <button type="button"
+                autofocus
+                command="close"
+                commandfor="delete-all-dialog"
+                class="btn-style-ghost btn-size-md">
+                Cancel
+              </button>
+              <form method="POST"
+                action="{{ path('app_notification_delete_all') }}">
+                <button type="submit"
+                  class="btn-style-destructive btn-size-md w-full">
+                  Delete All
+                </button>
+              </form>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+  {% endif %}
+{% endblock %}
