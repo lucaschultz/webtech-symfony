@@ -12,27 +12,39 @@
       </p>
     </div>
 
-    <el-dropdown class="dropdown">
-      <button class="btn-style-primary btn-size-md w-full">Team Options</button>
-      <el-menu anchor="bottom end" popover class="dropdown-menu">
-        <a href="{{
-          path(
-            'app_team_edit',
-            {
-              id: team.id
-            }
-          )
-          }}"
-          class="dropdown-item">
-          Edit<span class="sr-only">, {{ team.name }}</span>
-        </a>
-        <button command="show-modal"
-          commandfor="delete-dialog-{{ team.id }}"
-          class="dropdown-item-destructive">
-          Delete<span class="sr-only">, {{ team.name }}</span>
+    {# Check if at least one action is allowed #}
+    {% set hasTeamActions = is_granted(TEAM_EDIT, team)
+      or is_granted(TEAM_DELETE, team)
+    %}
+    {% if hasTeamActions %}
+      <el-dropdown class="dropdown">
+        <button class="btn-style-primary btn-size-md w-full">
+          Team Options
         </button>
-      </el-menu>
-    </el-dropdown>
+        <el-menu anchor="bottom end" popover class="dropdown-menu">
+          {% if is_granted(TEAM_EDIT, team) %}
+            <a href="{{
+              path(
+                'app_team_edit',
+                {
+                  id: team.id
+                }
+              )
+              }}"
+              class="dropdown-item">
+              Edit<span class="sr-only">, {{ team.name }}</span>
+            </a>
+          {% endif %}
+          {% if is_granted(TEAM_DELETE, team) %}
+            <button command="show-modal"
+              commandfor="delete-dialog-{{ team.id }}"
+              class="dropdown-item-destructive">
+              Delete<span class="sr-only">, {{ team.name }}</span>
+            </button>
+          {% endif %}
+        </el-menu>
+      </el-dropdown>
+    {% endif %}
   </div>
 
   <div class="mt-8">
@@ -118,72 +130,74 @@
     </div>
   </div>
 
-  {# Delete Confirmation Modal #}
-  <el-dialog>
-    <dialog id="delete-dialog-{{ team.id }}"
-      aria-labelledby="dialog-title-{{ team.id }}"
-      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
-      <el-dialog-backdrop class="backdrop"></el-dialog-backdrop>
-      <div tabindex="0"
-        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-        <el-dialog-panel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-100 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                <svg viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  data-slot="icon"
-                  aria-hidden="true"
-                  class="size-6 text-red-600">
-                  <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 id="dialog-title-{{ team.id }}"
-                  class="text-base font-semibold text-gray-900">
-                  Delete Team
-                </h3>
-                <div class="mt-2">
-                  <p class="text-sm text-gray-600">
-                    Are you sure you want to delete "{{ team.name }}"? This
-                    action cannot be undone and will remove all team members.
-                  </p>
+  {# Delete Confirmation Modal - only render if user can delete #}
+  {% if is_granted(TEAM_DELETE, team) %}
+    <el-dialog>
+      <dialog id="delete-dialog-{{ team.id }}"
+        aria-labelledby="dialog-title-{{ team.id }}"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop class="backdrop"></el-dialog-backdrop>
+        <div tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+          <el-dialog-panel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-100 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
+                  <svg viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    data-slot="icon"
+                    aria-hidden="true"
+                    class="size-6 text-red-600">
+                    <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 id="dialog-title-{{ team.id }}"
+                    class="text-base font-semibold text-gray-900">
+                    Delete Team
+                  </h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-600">
+                      Are you sure you want to delete "{{ team.name }}"? This
+                      action cannot be undone and will remove all team members.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="border-t border-gray-200 px-4 py-3 flex flex-col justify-end sm:flex-row sm:px-6 gap-2">
-            <button type="button"
-              autofocus
-              command="close"
-              commandfor="delete-dialog-{{ team.id }}"
-              class="btn-style-ghost btn-size-md">
-              Cancel
-            </button>
-            <form method="POST"
-              action="{{
-              path(
-                'app_team_delete',
-                {
-                  id: team.id
-                }
-              )
-              }}">
-              <input type="hidden"
-                name="_token"
-                value="{{ csrf_token('delete_team_' ~ team.id) }}" />
-              <button type="submit"
-                class="btn-style-destructive btn-size-md w-full">
-                Delete
+            <div class="border-t border-gray-200 px-4 py-3 flex flex-col justify-end sm:flex-row sm:px-6 gap-2">
+              <button type="button"
+                autofocus
+                command="close"
+                commandfor="delete-dialog-{{ team.id }}"
+                class="btn-style-ghost btn-size-md">
+                Cancel
               </button>
-            </form>
-          </div>
-        </el-dialog-panel>
-      </div>
-    </dialog>
-  </el-dialog>
+              <form method="POST"
+                action="{{
+                path(
+                  'app_team_delete',
+                  {
+                    id: team.id
+                  }
+                )
+                }}">
+                <input type="hidden"
+                  name="_token"
+                  value="{{ csrf_token('delete_team_' ~ team.id) }}" />
+                <button type="submit"
+                  class="btn-style-destructive btn-size-md w-full">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+  {% endif %}
 {% endblock %}

@@ -5,25 +5,42 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Form\TeamNewType;
 use App\Repository\TeamRepository;
+use App\Security\Voter\TeamVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class TeamController extends AbstractController {
   #[Route("/teams/{id}", name: "app_team_show", requirements: ["id" => "\d+"])]
   public function show(Team $team): Response {
-    // ToDo: add logic to restrict viewing to team members only!
+    try {
+      $this->denyAccessUnlessGranted(TeamVoter::VIEW, $team);
+    } catch (AccessDeniedException $e) {
+      $this->addFlash("error", "You do not have permission to view this team.");
+      return $this->redirectToRoute("app_teams_list");
+    }
 
     return $this->render("team/show.html.twig", [
       "team" => $team,
+      "TEAM_EDIT" => TeamVoter::EDIT,
+      "TEAM_DELETE" => TeamVoter::DELETE,
     ]);
   }
 
   #[Route("/teams/new", name: "app_team_new")]
   public function new(Request $request, EntityManagerInterface $em): Response {
+    try {
+      $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+    } catch (AccessDeniedException $e) {
+      $this->addFlash("error", "Please login or create a new account first.");
+      return $this->redirectToRoute("app_home");
+    }
+
     $team = new Team();
+
     $form = $this->createForm(TeamNewType::class, $team, [
       "exclude_user" => $this->getUser(),
     ]);
@@ -47,12 +64,19 @@ final class TeamController extends AbstractController {
     ]);
   }
 
-  #[Route("/team/{id}/edit", name: "app_team_edit")]
+  #[Route("/teams/{id}/edit", name: "app_team_edit")]
   public function edit(
     Request $request,
     Team $team,
     EntityManagerInterface $em
   ): Response {
+    try {
+      $this->denyAccessUnlessGranted(TeamVoter::EDIT, $team);
+    } catch (AccessDeniedException $e) {
+      $this->addFlash("error", "You do not have permission to edit this team.");
+      return $this->redirectToRoute("app_team_show", ["id" => $team->getId()]);
+    }
+
     $form = $this->createForm(TeamNewType::class, $team);
 
     // Exclude owner from selectable members
@@ -86,12 +110,15 @@ final class TeamController extends AbstractController {
     Team $team,
     EntityManagerInterface $em
   ): Response {
-    // Only allow the team owner to delete
-    // if ($team->getCreatedBy() !== $this->getUser()) {
-    //   throw $this->createAccessDeniedException(
-    //     "Only the team owner can delete the team."
-    //   );
-    // }
+    try {
+      $this->denyAccessUnlessGranted(TeamVoter::DELETE, $team);
+    } catch (AccessDeniedException $e) {
+      $this->addFlash(
+        "error",
+        "You do not have permission to delete this team."
+      );
+      return $this->redirectToRoute("app_team_show", ["id" => $team->getId()]);
+    }
 
     $em->remove($team);
     $em->flush();
@@ -114,6 +141,9 @@ final class TeamController extends AbstractController {
 
     return $this->render("team/list.html.twig", [
       "teams" => $teams,
+      "TEAM_VIEW" => TeamVoter::VIEW,
+      "TEAM_EDIT" => TeamVoter::EDIT,
+      "TEAM_DELETE" => TeamVoter::DELETE,
     ]);
   }
 }

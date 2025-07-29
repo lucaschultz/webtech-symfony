@@ -109,6 +109,10 @@ class Team {
     return $this;
   }
 
+  public function hasMember(User $user): bool {
+    return $this->getUsers()->contains($user);
+  }
+
   #[ORM\ManyToOne(targetEntity: User::class)]
   #[ORM\JoinColumn(nullable: false)]
   private ?User $createdBy = null;
