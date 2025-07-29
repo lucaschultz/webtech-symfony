@@ -74,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     $this->createdTasks = new ArrayCollection();
     $this->assignedTasks = new ArrayCollection();
     $this->teams = new ArrayCollection();
+    $this->appNotifications = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -235,6 +236,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   #[ORM\JoinTable(name: "user_team")]
   private Collection $teams;
 
+  /**
+   * @var Collection<int, AppNotification>
+   */
+  #[ORM\OneToMany(targetEntity: AppNotification::class, mappedBy: 'recipient', orphanRemoval: true)]
+  private Collection $appNotifications;
+
   /** @return Collection<int, Team> */
   public function getTeams(): Collection {
     return $this->teams;
@@ -253,5 +260,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
       $team->removeUser($this);
     }
     return $this;
+  }
+
+  /**
+   * @return Collection<int, AppNotification>
+   */
+  public function getAppNotifications(): Collection
+  {
+      return $this->appNotifications;
+  }
+
+  public function addAppNotification(AppNotification $appNotification): static
+  {
+      if (!$this->appNotifications->contains($appNotification)) {
+          $this->appNotifications->add($appNotification);
+          $appNotification->setRecipient($this);
+      }
+
+      return $this;
+  }
+
+  public function removeAppNotification(AppNotification $appNotification): static
+  {
+      if ($this->appNotifications->removeElement($appNotification)) {
+          // set the owning side to null (unless already changed)
+          if ($appNotification->getRecipient() === $this) {
+              $appNotification->setRecipient(null);
+          }
+      }
+
+      return $this;
   }
 }

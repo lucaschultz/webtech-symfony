@@ -11,6 +11,7 @@ hashers
 healthcheck
 hotwired
 importmap
+inversed
 isready
 javascripts
 Luca
