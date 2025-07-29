@@ -332,14 +332,37 @@
             </ul>
           </li>
           <li class="-mx-6 mt-auto">
-            <a href="#"
-              class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50">
-              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-                class="size-8 rounded-full bg-gray-50" />
-              <span class="sr-only">Your profile</span>
-              <span aria-hidden="true">Tom Cook</span>
-            </a>
+            <el-dropdown class="dropdown">
+              <button class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-950/7.5 w-full focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-indigo-600">
+                <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
+                    'U'
+                  ) }}+{{ app.user.lastName|default(
+                    'ser'
+                  ) }}&background=4f46e5&color=fff"
+                  alt="{{ app.user.firstName|default('User') }}"
+                  class="size-8 rounded-full bg-gray-50" />
+                <span>
+                  {{ app.user.firstName|default('User') }}
+                  {{ app.user.lastName|default('') }}
+                </span>
+                <svg class="size-4 ml-auto" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+              <el-menu anchor="top start" popover class="dropdown-menu">
+                <form id="logout-form-sidebar"
+                  action="{{ path('app_logout') }}"
+                  method="post">
+                  <button type="submit" class="dropdown-item-destructive">
+                    Logout
+                  </button>
+                </form>
+              </el-menu>
+            </el-dropdown>
           </li>
         </ul>
       </nav>
@@ -366,13 +389,30 @@
         </div>
       </button>
 
-      <a href="#"
-        class="rounded-full ml-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-        <span class="sr-only">Your profile</span>
-        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-          class="size-8 rounded-full bg-gray-50" />
-      </a>
+      <el-dropdown class="dropdown ml-auto">
+        <button class="flex items-center gap-x-4 px-2 py-0.5 text-sm font-semibold text-gray-900 hover:bg-gray-950/7.5 rounded focusable -mr-2">
+          <span>
+            {{ app.user.firstName|default('User') }}
+            {{ app.user.lastName|default('') }}
+          </span>
+          <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
+              'U'
+            ) }}+{{ app.user.lastName|default(
+              'ser'
+            ) }}&background=4f46e5&color=fff"
+            alt="{{ app.user.firstName|default('User') }}"
+            class="size-8 rounded-full bg-gray-50" />
+        </button>
+        <el-menu anchor="top start" popover class="dropdown-menu">
+          <form id="logout-form-sidebar"
+            action="{{ path('app_logout') }}"
+            method="post">
+            <button type="submit" class="dropdown-item-destructive">
+              Logout
+            </button>
+          </form>
+        </el-menu>
+      </el-dropdown>
     </div>
     <main class="py-10 lg:py-14">
       <div class="px-4 sm:px-6 lg:px-8">

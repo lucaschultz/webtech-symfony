@@ -9,6 +9,11 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController extends AbstractController {
   #[Route("/", name: "app_home")]
   public function index(): Response {
-    return $this->redirectToRoute("app_tasks_list");
+    if ($this->getUser()) {
+      return $this->redirectToRoute("app_tasks_list");
+    }
+
+    // Otherwise, show the normal homepage
+    return $this->render("home/index.html.twig");
   }
 }

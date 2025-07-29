@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block body %}
+  <div class="min-h-screen flex flex-col items-center justify-center bg-white space-y-8">
+    <h1 class="text-2xl font-bold mb-6">
+      Welcome to StudiBonnTask
+    </h1>
+
+    <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
+      <a href="{{ path('app_login') }}"
+        class="flex-1 flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        Login
+      </a>
+
+      <a href="{{ path('app_register') }}"
+        class="flex-1 flex justify-center rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-indigo-600 shadow-xs hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        Register
+      </a>
+    </div>
+  </div>
+{% endblock %}

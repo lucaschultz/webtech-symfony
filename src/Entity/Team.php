@@ -32,6 +32,7 @@ class Team {
 
   public function __construct() {
     $this->tasks = new ArrayCollection();
+    $this->users = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -82,6 +83,42 @@ class Team {
       }
     }
 
+    return $this;
+  }
+
+  #[ORM\ManyToMany(targetEntity: User::class, mappedBy: "teams")]
+  private Collection $users;
+
+  /** @return Collection<int, User> */
+  public function getUsers(): Collection {
+    return $this->users;
+  }
+
+  public function addUser(User $user): self {
+    if (!$this->users->contains($user)) {
+      $this->users[] = $user;
+      $user->addTeam($this); // keep both sides in sync
+    }
+    return $this;
+  }
+
+  public function removeUser(User $user): self {
+    if ($this->users->removeElement($user)) {
+      $user->removeTeam($this);
+    }
+    return $this;
+  }
+
+  #[ORM\ManyToOne(targetEntity: User::class)]
+  #[ORM\JoinColumn(nullable: false)]
+  private ?User $createdBy = null;
+
+  public function getCreatedBy(): ?User {
+    return $this->createdBy;
+  }
+
+  public function setCreatedBy(?User $user): self {
+    $this->createdBy = $user;
     return $this;
   }
 }
