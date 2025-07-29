@@ -73,6 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   public function __construct() {
     $this->createdTasks = new ArrayCollection();
     $this->assignedTasks = new ArrayCollection();
+    $this->teams = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -227,6 +228,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   public function setIsVerified(bool $isVerified): static {
     $this->isVerified = $isVerified;
 
+    return $this;
+  }
+
+  #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: "users")]
+  #[ORM\JoinTable(name: "user_team")]
+  private Collection $teams;
+
+  /** @return Collection<int, Team> */
+  public function getTeams(): Collection {
+    return $this->teams;
+  }
+
+  public function addTeam(Team $team): self {
+    if (!$this->teams->contains($team)) {
+      $this->teams[] = $team;
+      $team->addUser($this); // keep both sides in sync
+    }
+    return $this;
+  }
+
+  public function removeTeam(Team $team): self {
+    if ($this->teams->removeElement($team)) {
+      $team->removeUser($this);
+    }
     return $this;
   }
 }
