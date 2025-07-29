@@ -5,6 +5,7 @@ chromephp
 ctype
 dbname
 firephp
+focusable
 Gedmo
 hashers
 healthcheck
@@ -25,6 +26,7 @@ PHPUNIT
 savepoints
 setval
 stof
+Studi
 stylesheet
 symfony
 Symfony

@@ -3,7 +3,7 @@
 {% block body %}
   <el-dialog>
     <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
-      <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
+      <el-dialog-backdrop class="backdrop"></el-dialog-backdrop>
 
       <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
         <el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
@@ -11,7 +11,7 @@
             <button type="button"
               command="close"
               commandfor="sidebar"
-              class="-m-2.5 p-2.5">
+              class="btn-style-ghost btn-size-sm -m-2.5">
               <span class="sr-only">Close sidebar</span>
               <svg viewBox="0 0 24 24"
                 fill="none"
@@ -19,7 +19,7 @@
                 stroke-width="1.5"
                 data-slot="icon"
                 aria-hidden="true"
-                class="size-6 text-white">
+                class="size-6">
                 <path d="M6 18 18 6M6 6l12 12"
                   stroke-linecap="round"
                   stroke-linejoin="round" />
@@ -28,11 +28,13 @@
           </div>
 
           <!-- Sidebar component, swap this element with another sidebar if you like -->
-          <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
-            <div class="flex h-16 shrink-0 items-center">
-              <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                alt="Your Company"
-                class="h-8 w-auto" />
+          <div class="flex grow flex-col gap-y-2 overflow-y-auto bg-gray-100 px-6 pb-2">
+            <div class="flex h-14 shrink-0 items-center">
+              <div class="flex h-16 text-indigo-600 shrink-0 items-center font-mono tracking-tight">
+                <span class="text-gray-400">&lt;</span>StudiBonnTask<span class="text-gray-400">
+                  &gt;
+                </span>
+              </div>
             </div>
             <nav class="flex flex-1 flex-col">
               <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -185,11 +187,11 @@
   <!-- Static sidebar for desktop -->
   <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
     <!-- Sidebar component, swap this element with another sidebar if you like -->
-    <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-      <div class="flex h-16 shrink-0 items-center">
-        <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-          class="h-8 w-auto" />
+    <div class="flex grow flex-col gap-y-2 overflow-y-auto border-r border-gray-200 bg-gray-100 px-6">
+      <div class="flex h-14 text-indigo-600 shrink-0 items-center font-mono tracking-tight">
+        <span class="text-gray-400">&lt;</span>StudiBonnTask<span class="text-gray-400">
+          &gt;
+        </span>
       </div>
       <nav class="flex flex-1 flex-col">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -344,40 +346,40 @@
     </div>
   </div>
 
-  <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-xs sm:px-6 lg:hidden">
-    <button type="button"
-      command="show-modal"
-      commandfor="sidebar"
-      class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
-      <span class="sr-only">Open sidebar</span>
-      <svg viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        data-slot="icon"
-        aria-hidden="true"
-        class="size-6">
-        <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-    </button>
-    <div class="flex-1 text-sm/6 font-semibold text-gray-900">
-      Dashboard
+  <div class="lg:pl-72">
+    <div class="bg-gray-50/30 lg:hidden backdrop-blur-2xl px-4 sm:px-6 lg:px-8 gap-x-2 border-b border-gray-200 h-14 sticky top-0 flex items-center">
+      <button type="button"
+        command="show-modal"
+        commandfor="sidebar"
+        class="inline-flex px-1.5 py-1.5 -ml-1.5 lg:hidden items-center justify-center text-sm/6 font-medium text-gray-600 rounded-md hover:bg-gray-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          class="size-4">
+          <path fill-rule="evenodd"
+            d="M2 4.75A.75.75 0 0 1 2.75 4h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75Zm0 6.5a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z"
+            clip-rule="evenodd" />
+        </svg>
+
+        <div class="sr-only">
+          Open Menu
+        </div>
+      </button>
+
+      <a href="#"
+        class="rounded-full ml-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <span class="sr-only">Your profile</span>
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          alt=""
+          class="size-8 rounded-full bg-gray-50" />
+      </a>
     </div>
-    <a href="#">
-      <span class="sr-only">Your profile</span>
-      <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-        alt=""
-        class="size-8 rounded-full bg-gray-50" />
-    </a>
+    <main class="py-10 lg:py-14">
+      <div class="px-4 sm:px-6 lg:px-8">
+        {% block content %}
+
+        {% endblock %}
+      </div>
+    </main>
   </div>
-
-  <main class="py-10 lg:pl-72">
-    <div class="px-4 sm:px-6 lg:px-8">
-      {% block content %}
-
-      {% endblock %}
-    </div>
-  </main>
 {% endblock %}

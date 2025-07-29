@@ -32,6 +32,7 @@ class TaskController extends AbstractController {
       "deadline",
       "createdAt",
     ];
+
     if (!in_array($sortBy, $allowedSortFields)) {
       $sortBy = "title";
     }
@@ -40,10 +41,14 @@ class TaskController extends AbstractController {
       $sortDirection = "asc";
     }
 
-    $tasks = $taskRepository->findBy(
-      ["assignedTo" => $this->getUser()],
-      [$sortBy => $sortDirection]
-    );
+    $tasks = $taskRepository
+      ->createQueryBuilder("t")
+      ->where("t.assignedTo = :user")
+      ->orWhere("t.createdBy = :user")
+      ->setParameter("user", $this->getUser())
+      ->orderBy("t.$sortBy", $sortDirection)
+      ->getQuery()
+      ->getResult();
 
     return $this->render("task/list.html.twig", [
       "tasks" => $tasks,
