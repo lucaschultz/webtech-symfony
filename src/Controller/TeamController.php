@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Team;
 use App\Form\TeamNewType;
+use App\Repository\TeamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 final class TeamController extends AbstractController {
   #[Route("/teams/{id}", name: "app_team_show", requirements: ["id" => "\d+"])]
   public function show(Team $team): Response {
-    $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
     // ToDo: add logic to restrict viewing to team members only!
 
     return $this->render("team/show.html.twig", [
@@ -23,8 +23,6 @@ final class TeamController extends AbstractController {
 
   #[Route("/teams/new", name: "app_team_new")]
   public function new(Request $request, EntityManagerInterface $em): Response {
-    $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY"); // Only logged-in users
-
     $team = new Team();
     $form = $this->createForm(TeamNewType::class, $team, [
       "exclude_user" => $this->getUser(),
@@ -55,8 +53,6 @@ final class TeamController extends AbstractController {
     Team $team,
     EntityManagerInterface $em
   ): Response {
-    $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
-
     $form = $this->createForm(TeamNewType::class, $team);
 
     // Exclude owner from selectable members
@@ -81,6 +77,43 @@ final class TeamController extends AbstractController {
     return $this->render("team/edit.html.twig", [
       "form" => $form,
       "team" => $team,
+    ]);
+  }
+
+  #[Route("/teams/{id}/delete", name: "app_team_delete", methods: ["POST"])]
+  public function delete(
+    Request $request,
+    Team $team,
+    EntityManagerInterface $em
+  ): Response {
+    // Only allow the team owner to delete
+    // if ($team->getCreatedBy() !== $this->getUser()) {
+    //   throw $this->createAccessDeniedException(
+    //     "Only the team owner can delete the team."
+    //   );
+    // }
+
+    $em->remove($team);
+    $em->flush();
+
+    $this->addFlash("success", "Team deleted successfully.");
+
+    return $this->redirectToRoute("app_teams_list");
+  }
+
+  #[Route("/teams", name: "app_teams_list")]
+  public function list(TeamRepository $teamRepository): Response {
+    // Fetch all teams, with users, sorted by createdAt DESC
+    $teams = $teamRepository
+      ->createQueryBuilder("t")
+      ->leftJoin("t.users", "u")
+      ->addSelect("u")
+      ->orderBy("t.createdAt", "DESC")
+      ->getQuery()
+      ->getResult();
+
+    return $this->render("team/list.html.twig", [
+      "teams" => $teams,
     ]);
   }
 }
