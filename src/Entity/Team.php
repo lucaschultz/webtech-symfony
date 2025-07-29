@@ -108,4 +108,17 @@ class Team {
     }
     return $this;
   }
+
+  #[ORM\ManyToOne(targetEntity: User::class)]
+  #[ORM\JoinColumn(nullable: false)]
+  private ?User $createdBy = null;
+
+  public function getCreatedBy(): ?User {
+    return $this->createdBy;
+  }
+
+  public function setCreatedBy(?User $user): self {
+    $this->createdBy = $user;
+    return $this;
+  }
 }

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Team;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -16,6 +17,8 @@ class TeamNewType extends AbstractType {
     FormBuilderInterface $builder,
     array $options
   ): void {
+    $excludeUser = $options["exclude_user"];
+
     $builder
       ->add("name", TextType::class, [
         "label" => "Team Name",
@@ -40,13 +43,22 @@ class TeamNewType extends AbstractType {
         "expanded" => true,
         "by_reference" => false,
         "required" => false,
-        "label" => "Add Members",
+        "query_builder" => function (UserRepository $ur) use ($excludeUser) {
+          $qb = $ur->createQueryBuilder("u");
+          if ($excludeUser) {
+            $qb
+              ->where("u != :excludeUser")
+              ->setParameter("excludeUser", $excludeUser);
+          }
+          return $qb;
+        },
       ]);
   }
 
   public function configureOptions(OptionsResolver $resolver): void {
     $resolver->setDefaults([
       "data_class" => Team::class,
+      "exclude_user" => null,
     ]);
   }
 }

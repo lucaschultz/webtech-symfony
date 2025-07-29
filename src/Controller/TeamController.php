@@ -26,17 +26,20 @@ final class TeamController extends AbstractController {
     $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY"); // Only logged-in users
 
     $team = new Team();
-    $form = $this->createForm(TeamNewType::class, $team);
+    $form = $this->createForm(TeamNewType::class, $team, [
+      "exclude_user" => $this->getUser(),
+    ]);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      // Add current user as member
+      // Add current user as owner and as member
+      $team->setCreatedBy($this->getUser());
       $team->addUser($this->getUser());
       $em->persist($team);
       $em->flush();
 
-      $this->addFlash("success", "Team created!");
+      $this->addFlash("success", "Team created successfully!");
 
       return $this->redirectToRoute("app_team_show", ["id" => $team->getId()]);
     }
@@ -52,11 +55,22 @@ final class TeamController extends AbstractController {
     Team $team,
     EntityManagerInterface $em
   ): Response {
+    $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+
     $form = $this->createForm(TeamNewType::class, $team);
+
+    // Exclude owner from selectable members
+    $form = $this->createForm(TeamNewType::class, $team, [
+      "exclude_user" => $team->getCreatedBy(),
+    ]);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
+      if (!$team->getUsers()->contains($team->getCreatedBy())) {
+        $team->addUser($team->getCreatedBy());
+      }
+
       $em->flush();
 
       $this->addFlash("success", "Team updated successfully!");
