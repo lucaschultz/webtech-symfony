@@ -64,7 +64,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="#"
+                      <a href="{{ path('app_teams_list') }}"
                         class="{{
                         app.request.get('_route') starts with 'app_teams'
                           ? 'group flex gap-x-3 rounded-md bg-gray-50 p-2 text-sm/6 font-semibold text-indigo-600'
@@ -221,7 +221,7 @@
                 </a>
               </li>
               <li>
-                <a href="#"
+                <a href="{{ path('app_teams_list') }}"
                   class="{{
                   app.request.get('_route') starts with 'app_teams'
                     ? 'group flex gap-x-3 rounded-md bg-gray-50 p-2 text-sm/6 font-semibold text-indigo-600'
@@ -392,14 +392,44 @@
       </svg>
     </button>
     <div class="flex-1 text-sm/6 font-semibold text-gray-900">
-      Dashboard
+      StudiBonnTask
     </div>
-    <a href="#">
-      <span class="sr-only">Your profile</span>
-      <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-        alt=""
-        class="size-8 rounded-full bg-gray-50" />
-    </a>
+    <el-dropdown class="ml-auto">
+      <button class="flex items-center gap-2 focus:outline-none">
+        <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
+            'U'
+          ) }}+{{ app.user.lastName|default(
+            'ser'
+          ) }}&background=4f46e5&color=fff"
+          alt="{{ app.user.firstName|default('User') }}"
+          class="size-8 rounded-full bg-gray-50" />
+        <span class="text-sm font-semibold text-gray-900">
+          {{ app.user.firstName|default('User') }}
+          {{ app.user.lastName|default('') }}
+        </span>
+        <svg class="size-4 ml-1 text-gray-500" viewBox="0 0 20 20" fill="none">
+          <path d="M6 8l4 4 4-4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+      <el-menu anchor="top end"
+        popover
+        class="w-48 origin-bottom-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition transition-discrete">
+        <div class="py-1">
+          <form id="logout-form-mobile"
+            action="{{ path('app_logout') }}"
+            method="post">
+            <button type="submit"
+              class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+              Logout
+            </button>
+          </form>
+        </div>
+      </el-menu>
+    </el-dropdown>
   </div>
 
   <main class="py-10 lg:pl-72">
