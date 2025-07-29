@@ -18,15 +18,15 @@
   }
 
   .btn-style-ghost {
-    @apply text-sm/6 text-gray-900 text-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-gray-950/7.5 focus-visible:bg-gray-950/7.5;
+    @apply text-sm/6 text-gray-900 whitespace-nowrap text-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-gray-950/7.5 focus-visible:bg-gray-950/7.5;
   }
 
   .btn-style-primary {
-    @apply rounded-md bg-indigo-600 text-center border border-indigo-800 text-sm text-gray-50 hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+    @apply rounded-md bg-indigo-600 whitespace-nowrap text-center border border-indigo-800 text-sm text-gray-50 hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
   }
 
   .btn-style-destructive {
-    @apply rounded-md bg-red-600 border text-center border-red-800 text-sm text-gray-50 hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+    @apply rounded-md bg-red-600 border whitespace-nowrap text-center border-red-800 text-sm text-gray-50 hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
   }
 
   .backdrop {
