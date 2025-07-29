@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Constant\TaskPriority;
 use App\Constant\TaskStatus;
+use App\Entity\Comment;
 use App\Entity\Task;
+use App\Form\CommentType;
 use App\Form\TaskEditType;
 use App\Form\TaskNewType;
 use App\Repository\TaskRepository;
@@ -61,15 +63,42 @@ class TaskController extends AbstractController {
     Route(
       "/tasks/{taskId}",
       name: "app_task_show",
-      methods: ["GET"],
+      methods: ["GET", "POST"],
       requirements: ["taskId" => "\d+"]
     )
   ]
-  public function show(int $taskId, TaskRepository $taskRepository): Response {
+  public function show(
+    int $taskId,
+    Request $request,
+    EntityManagerInterface $em,
+    TaskRepository $taskRepository,
+    RedirectService $redirectService
+  ): Response {
     $task = $taskRepository->findOrFail($taskId);
+
+    $comment = new Comment();
+    $form = $this->createForm(CommentType::class, $comment);
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $comment->setAuthor($this->getUser());
+      $comment->setTask($task);
+
+      $em->persist($comment);
+      $em->flush();
+
+      $this->addFlash("success", "Comment added successfully!");
+
+      // Redirect to avoid form resubmission
+      return $redirectService->safeRedirect($request, "app_task_show", [
+        "taskId" => $task->getId(),
+      ]);
+    }
 
     return $this->render("task/show.html.twig", [
       "task" => $task,
+      "commentForm" => $form->createView(),
     ]);
   }
 

@@ -75,6 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     $this->assignedTasks = new ArrayCollection();
     $this->teams = new ArrayCollection();
     $this->appNotifications = new ArrayCollection();
+    $this->comments = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -239,8 +240,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   /**
    * @var Collection<int, AppNotification>
    */
-  #[ORM\OneToMany(targetEntity: AppNotification::class, mappedBy: 'recipient', orphanRemoval: true)]
+  #[
+    ORM\OneToMany(
+      targetEntity: AppNotification::class,
+      mappedBy: "recipient",
+      orphanRemoval: true
+    )
+  ]
   private Collection $appNotifications;
+
+  /**
+   * @var Collection<int, Comment>
+   */
+  #[
+    ORM\OneToMany(
+      targetEntity: Comment::class,
+      mappedBy: "author",
+      orphanRemoval: true
+    )
+  ]
+  private Collection $comments;
 
   /** @return Collection<int, Team> */
   public function getTeams(): Collection {
@@ -265,30 +284,56 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   /**
    * @return Collection<int, AppNotification>
    */
-  public function getAppNotifications(): Collection
-  {
-      return $this->appNotifications;
+  public function getAppNotifications(): Collection {
+    return $this->appNotifications;
   }
 
-  public function addAppNotification(AppNotification $appNotification): static
-  {
-      if (!$this->appNotifications->contains($appNotification)) {
-          $this->appNotifications->add($appNotification);
-          $appNotification->setRecipient($this);
-      }
+  public function addAppNotification(AppNotification $appNotification): static {
+    if (!$this->appNotifications->contains($appNotification)) {
+      $this->appNotifications->add($appNotification);
+      $appNotification->setRecipient($this);
+    }
 
-      return $this;
+    return $this;
   }
 
-  public function removeAppNotification(AppNotification $appNotification): static
-  {
-      if ($this->appNotifications->removeElement($appNotification)) {
-          // set the owning side to null (unless already changed)
-          if ($appNotification->getRecipient() === $this) {
-              $appNotification->setRecipient(null);
-          }
+  public function removeAppNotification(
+    AppNotification $appNotification
+  ): static {
+    if ($this->appNotifications->removeElement($appNotification)) {
+      // set the owning side to null (unless already changed)
+      if ($appNotification->getRecipient() === $this) {
+        $appNotification->setRecipient(null);
       }
+    }
 
-      return $this;
+    return $this;
+  }
+
+  /**
+   * @return Collection<int, Comment>
+   */
+  public function getComments(): Collection {
+    return $this->comments;
+  }
+
+  public function addComment(Comment $comment): static {
+    if (!$this->comments->contains($comment)) {
+      $this->comments->add($comment);
+      $comment->setAuthor($this);
+    }
+
+    return $this;
+  }
+
+  public function removeComment(Comment $comment): static {
+    if ($this->comments->removeElement($comment)) {
+      // set the owning side to null (unless already changed)
+      if ($comment->getAuthor() === $this) {
+        $comment->setAuthor(null);
+      }
+    }
+
+    return $this;
   }
 }
