@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Form\TeamNewType;
 use App\Repository\TeamRepository;
+use App\Security\Voter\TeamVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 final class TeamController extends AbstractController {
   #[Route("/teams/{id}", name: "app_team_show", requirements: ["id" => "\d+"])]
   public function show(Team $team): Response {
-    // ToDo: add logic to restrict viewing to team members only!
+    $this->denyAccessUnlessGranted(TeamVoter::VIEW, $team);
 
     return $this->render("team/show.html.twig", [
       "team" => $team,
@@ -23,7 +24,10 @@ final class TeamController extends AbstractController {
 
   #[Route("/teams/new", name: "app_team_new")]
   public function new(Request $request, EntityManagerInterface $em): Response {
+    $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+
     $team = new Team();
+
     $form = $this->createForm(TeamNewType::class, $team, [
       "exclude_user" => $this->getUser(),
     ]);
@@ -53,6 +57,8 @@ final class TeamController extends AbstractController {
     Team $team,
     EntityManagerInterface $em
   ): Response {
+    $this->denyAccessUnlessGranted(TeamVoter::EDIT, $team);
+
     $form = $this->createForm(TeamNewType::class, $team);
 
     // Exclude owner from selectable members
@@ -86,12 +92,7 @@ final class TeamController extends AbstractController {
     Team $team,
     EntityManagerInterface $em
   ): Response {
-    // Only allow the team owner to delete
-    // if ($team->getCreatedBy() !== $this->getUser()) {
-    //   throw $this->createAccessDeniedException(
-    //     "Only the team owner can delete the team."
-    //   );
-    // }
+    $this->denyAccessUnlessGranted(TeamVoter::DELETE, $team);
 
     $em->remove($team);
     $em->flush();
@@ -114,6 +115,9 @@ final class TeamController extends AbstractController {
 
     return $this->render("team/list.html.twig", [
       "teams" => $teams,
+      "TEAM_VIEW" => TeamVoter::VIEW,
+      "TEAM_EDIT" => TeamVoter::EDIT,
+      "TEAM_DELETE" => TeamVoter::DELETE,
     ]);
   }
 }
