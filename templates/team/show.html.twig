@@ -22,15 +22,7 @@
           Team Options
         </button>
         <el-menu anchor="bottom end" popover class="dropdown-menu">
-          <a href="{{
-            path(
-              'app_team_tasks',
-              {
-                id: team.id
-              }
-            )
-            }}"
-            class="dropdown-item">
+          <a href="{{ path('app_team_tasks', { id: team.id }) }}" class="dropdown-item">
             Tasks<span class="sr-only">, {{ team.name }}</span>
           </a>
 
@@ -39,15 +31,7 @@
           {% endif %}
 
           {% if is_granted(TEAM_EDIT, team) %}
-            <a href="{{
-              path(
-                'app_team_edit',
-                {
-                  id: team.id
-                }
-              )
-              }}"
-              class="dropdown-item">
+            <a href="{{ path('app_team_edit', { id: team.id }) }}" class="dropdown-item">
               Edit<span class="sr-only">, {{ team.name }}</span>
             </a>
           {% endif %}
@@ -144,6 +128,36 @@
         </div>
       </dl>
     </div>
+
+    {# Pending Join Requests Section (only for team owner/allowed users) #}
+    {% if is_granted(TEAM_VIEW_REQUESTS, team) %}
+      <div class="mt-10">
+        <h2 class="text-base font-semibold text-gray-900 mb-3">Pending Join Requests</h2>
+        {% set pendingRequests = team.teamJoinRequests|filter(r => r.status == 'PENDING') %}
+        {% if pendingRequests|length > 0 %}
+          <ul class="divide-y divide-gray-200">
+            {% for request in pendingRequests %}
+              <li class="py-2 flex items-center justify-between">
+                <span>
+                  {{ request.requester.firstName }} {{ request.requester.lastName }}
+                  <span class="text-gray-400 text-xs ml-2">{{ request.createdAt|ago }}</span>
+                </span>
+                <div class="flex gap-2">
+                  <form method="POST" action="{{ path('app_join_request_accept', {id: request.id}) }}">
+                    <button type="submit" class="btn-style-primary btn-size-sm">Accept</button>
+                  </form>
+                  <form method="POST" action="{{ path('app_join_request_decline', {id: request.id}) }}">
+                    <button type="submit" class="btn-style-destructive btn-size-sm">Decline</button>
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <span class="text-gray-400 text-sm">No pending requests.</span>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
 
   {# Delete Confirmation Modal - only render if user can delete #}
@@ -194,14 +208,7 @@
                 Cancel
               </button>
               <form method="POST"
-                action="{{
-                path(
-                  'app_team_delete',
-                  {
-                    id: team.id
-                  }
-                )
-                }}">
+                action="{{ path('app_team_delete', { id: team.id }) }}">
                 <input type="hidden"
                   name="_token"
                   value="{{ csrf_token('delete_team_' ~ team.id) }}" />

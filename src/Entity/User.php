@@ -76,6 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     $this->teams = new ArrayCollection();
     $this->appNotifications = new ArrayCollection();
     $this->comments = new ArrayCollection();
+    $this->teamJoinRequests = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -265,6 +266,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   ]
   private Collection $comments;
 
+  /**
+   * @var Collection<int, TeamJoinRequest>
+   */
+  #[ORM\OneToMany(targetEntity: TeamJoinRequest::class, mappedBy: 'requester')]
+  private Collection $teamJoinRequests;
+
   /** @return Collection<int, Team> */
   public function getTeams(): Collection {
     return $this->teams;
@@ -339,5 +346,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     }
 
     return $this;
+  }
+
+  /**
+   * @return Collection<int, TeamJoinRequest>
+   */
+  public function getTeamJoinRequests(): Collection
+  {
+      return $this->teamJoinRequests;
+  }
+
+  public function addTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
+  {
+      if (!$this->teamJoinRequests->contains($teamJoinRequest)) {
+          $this->teamJoinRequests->add($teamJoinRequest);
+          $teamJoinRequest->setRequester($this);
+      }
+
+      return $this;
+  }
+
+  public function removeTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
+  {
+      if ($this->teamJoinRequests->removeElement($teamJoinRequest)) {
+          // set the owning side to null (unless already changed)
+          if ($teamJoinRequest->getRequester() === $this) {
+              $teamJoinRequest->setRequester(null);
+          }
+      }
+
+      return $this;
   }
 }

@@ -10,10 +10,15 @@ final class TeamVoter extends Voter {
   public const VIEW = "TEAM_VIEW";
   public const EDIT = "TEAM_EDIT";
   public const DELETE = "TEAM_DELETE";
+  public const VIEW_REQUESTS = "TEAM_VIEW_REQUESTS";
 
   protected function supports(string $attribute, mixed $subject): bool {
-    return in_array($attribute, [self::VIEW, self::EDIT, self::DELETE]) &&
-      $subject instanceof \App\Entity\Team;
+    return in_array($attribute, [
+      self::VIEW,
+      self::EDIT,
+      self::DELETE,
+      self::VIEW_REQUESTS,
+    ]) && $subject instanceof \App\Entity\Team;
   }
 
   protected function voteOnAttribute(
@@ -36,6 +41,9 @@ final class TeamVoter extends Voter {
       case self::EDIT:
         return $team->getCreatedBy() === $user;
       case self::DELETE:
+        return $team->getCreatedBy() === $user;
+      case self::VIEW_REQUESTS:
+        // Only team creator for now, can adapt later
         return $team->getCreatedBy() === $user;
     }
 

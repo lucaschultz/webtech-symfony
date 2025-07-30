@@ -27,6 +27,7 @@ final class TeamController extends AbstractController {
       "team" => $team,
       "TEAM_EDIT" => TeamVoter::EDIT,
       "TEAM_DELETE" => TeamVoter::DELETE,
+      "TEAM_VIEW_REQUESTS" => TeamVoter::VIEW_REQUESTS,
     ]);
   }
 

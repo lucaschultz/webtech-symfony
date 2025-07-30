@@ -14,7 +14,7 @@
   }
 
   .btn-size-sm {
-    @apply px-0.5 py-0.5;
+    @apply px-0.75 py-0.75;
   }
 
   .btn-style-ghost {
