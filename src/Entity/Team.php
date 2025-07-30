@@ -33,6 +33,7 @@ class Team {
   public function __construct() {
     $this->tasks = new ArrayCollection();
     $this->users = new ArrayCollection();
+    $this->teamJoinRequests = new ArrayCollection();
   }
 
   public function getId(): ?int {
@@ -117,6 +118,12 @@ class Team {
   #[ORM\JoinColumn(nullable: false)]
   private ?User $createdBy = null;
 
+  /**
+   * @var Collection<int, TeamJoinRequest>
+   */
+  #[ORM\OneToMany(targetEntity: TeamJoinRequest::class, mappedBy: 'team')]
+  private Collection $teamJoinRequests;
+
   public function getCreatedBy(): ?User {
     return $this->createdBy;
   }
@@ -124,5 +131,35 @@ class Team {
   public function setCreatedBy(?User $user): self {
     $this->createdBy = $user;
     return $this;
+  }
+
+  /**
+   * @return Collection<int, TeamJoinRequest>
+   */
+  public function getTeamJoinRequests(): Collection
+  {
+      return $this->teamJoinRequests;
+  }
+
+  public function addTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
+  {
+      if (!$this->teamJoinRequests->contains($teamJoinRequest)) {
+          $this->teamJoinRequests->add($teamJoinRequest);
+          $teamJoinRequest->setTeam($this);
+      }
+
+      return $this;
+  }
+
+  public function removeTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
+  {
+      if ($this->teamJoinRequests->removeElement($teamJoinRequest)) {
+          // set the owning side to null (unless already changed)
+          if ($teamJoinRequest->getTeam() === $this) {
+              $teamJoinRequest->setTeam(null);
+          }
+      }
+
+      return $this;
   }
 }
