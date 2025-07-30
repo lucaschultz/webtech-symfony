@@ -39,18 +39,19 @@ final class TeamController extends AbstractController {
       return $this->redirectToRoute("app_home");
     }
 
+    /** @var \App\Entity\User $user */
+    $user = $this->getUser();
     $team = new Team();
 
     $form = $this->createForm(TeamNewType::class, $team, [
-      "exclude_user" => $this->getUser(),
+      "exclude_user" => $user,
     ]);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      // Add current user as owner and as member
-      $team->setCreatedBy($this->getUser());
-      $team->addUser($this->getUser());
+      $team->setCreatedBy($user);
+      $team->addUser($user);
       $em->persist($team);
       $em->flush();
 
@@ -79,7 +80,6 @@ final class TeamController extends AbstractController {
 
     $form = $this->createForm(TeamNewType::class, $team);
 
-    // Exclude owner from selectable members
     $form = $this->createForm(TeamNewType::class, $team, [
       "exclude_user" => $team->getCreatedBy(),
     ]);
