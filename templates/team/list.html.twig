@@ -11,7 +11,15 @@
         team details, edit or delete teams, and create new ones.
       </p>
     </div>
-    <a href="{{ path('app_team_new') }}" class="btn-style-primary btn-size-md">
+    <a href="{{
+      path(
+        'app_team_new',
+        {
+          redirectTo: app.request.uri
+        }
+      )
+      }}"
+      class="btn-style-primary btn-size-md">
       New Team
     </a>
   </div>
@@ -172,7 +180,8 @@
                               path(
                                 'app_team_edit',
                                 {
-                                  id: team.id
+                                  id: team.id,
+                                  redirectTo: app.request.uri
                                 }
                               )
                               }}"

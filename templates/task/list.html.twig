@@ -12,7 +12,15 @@
       </p>
     </div>
 
-    <a href="{{ path('app_task_new') }}" class="btn-style-primary btn-size-md">
+    <a href="{{
+      path(
+        'app_task_new',
+        {
+          redirectTo: app.request.uri
+        }
+      )
+      }}"
+      class="btn-style-primary btn-size-md">
       New Task
     </a>
   </div>

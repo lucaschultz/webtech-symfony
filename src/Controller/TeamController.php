@@ -6,6 +6,7 @@ use App\Entity\Team;
 use App\Form\TeamNewType;
 use App\Repository\TeamRepository;
 use App\Security\Voter\TeamVoter;
+use App\Service\RedirectService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,7 +33,11 @@ final class TeamController extends AbstractController {
   }
 
   #[Route("/teams/new", name: "app_team_new")]
-  public function new(Request $request, EntityManagerInterface $em): Response {
+  public function new(
+    Request $request,
+    EntityManagerInterface $em,
+    RedirectService $redirectService
+  ): Response {
     try {
       $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
     } catch (AccessDeniedException $e) {
@@ -58,7 +63,9 @@ final class TeamController extends AbstractController {
 
       $this->addFlash("success", "Team created successfully!");
 
-      return $this->redirectToRoute("app_team_show", ["id" => $team->getId()]);
+      return $redirectService->safeRedirect($request, "app_team_show", [
+        "id" => $team->getId(),
+      ]);
     }
 
     return $this->render("team/new.html.twig", [
@@ -70,7 +77,8 @@ final class TeamController extends AbstractController {
   public function edit(
     Request $request,
     Team $team,
-    EntityManagerInterface $em
+    EntityManagerInterface $em,
+    RedirectService $redirectService
   ): Response {
     try {
       $this->denyAccessUnlessGranted(TeamVoter::EDIT, $team);
@@ -96,7 +104,9 @@ final class TeamController extends AbstractController {
 
       $this->addFlash("success", "Team updated successfully!");
 
-      return $this->redirectToRoute("app_team_show", ["id" => $team->getId()]);
+      return $redirectService->safeRedirect($request, "app_team_show", [
+        "id" => $team->getId(),
+      ]);
     }
 
     return $this->render("team/edit.html.twig", [
