@@ -64,11 +64,16 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
               {% for team in teams %}
-                {% set isMember = team.users|filter(u => u.id == app.user.id)|length > 0 %}
+                {% set isMember = app.user in team.users %}
                 {% set isOwner = team.createdBy.id == app.user.id %}
-                {% set pendingRequest = team.teamJoinRequests|filter(r =>
-                  r.requester.id == app.user.id and r.status == 'PENDING'
-                )|first %}
+                {% set pendingRequest = false %}
+                {% for request in team.teamJoinRequests %}
+                  {% if
+                    request.requester.id == app.user.id
+                      and request.status == 'PENDING' %}
+                    {% set pendingRequest = request %}
+                  {% endif %}
+                {% endfor %}
                 <tr>
                   <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
                     {% if is_granted(TEAM_VIEW, team) %}
@@ -185,13 +190,27 @@
                         </el-menu>
                       </el-dropdown>
                     {% elseif not pendingRequest %}
-                      <form method="POST" action="{{ path('app_team_join_request', { id: team.id }) }}" class="inline">
-                        <button type="submit" class="btn-style-primary btn-size-sm">
-                          Request to Join
+                      <form method="POST"
+                        action="{{
+                        path(
+                          'app_team_join_request',
+                          {
+                            id: team.id
+                          }
+                        )
+                        }}"
+                        class="inline">
+                        <button type="submit"
+                          class="btn-style-ghost btn-size-sm">
+                          <div class="px-1">
+                            Request to Join
+                          </div>
                         </button>
                       </form>
                     {% else %}
-                      <span class="inline-block text-indigo-600 italic">Request pending</span>
+                      <span class="inline-block text-gray-400">
+                        Join request pending
+                      </span>
                     {% endif %}
                   </td>
                 </tr>

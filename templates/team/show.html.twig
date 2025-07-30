@@ -22,7 +22,15 @@
           Team Options
         </button>
         <el-menu anchor="bottom end" popover class="dropdown-menu">
-          <a href="{{ path('app_team_tasks', { id: team.id }) }}" class="dropdown-item">
+          <a href="{{
+            path(
+              'app_team_tasks',
+              {
+                id: team.id
+              }
+            )
+            }}"
+            class="dropdown-item">
             Tasks<span class="sr-only">, {{ team.name }}</span>
           </a>
 
@@ -31,7 +39,15 @@
           {% endif %}
 
           {% if is_granted(TEAM_EDIT, team) %}
-            <a href="{{ path('app_team_edit', { id: team.id }) }}" class="dropdown-item">
+            <a href="{{
+              path(
+                'app_team_edit',
+                {
+                  id: team.id
+                }
+              )
+              }}"
+              class="dropdown-item">
               Edit<span class="sr-only">, {{ team.name }}</span>
             </a>
           {% endif %}
@@ -132,29 +148,72 @@
     {# Pending Join Requests Section (only for team owner/allowed users) #}
     {% if is_granted(TEAM_VIEW_REQUESTS, team) %}
       <div class="mt-10">
-        <h2 class="text-base font-semibold text-gray-900 mb-3">Pending Join Requests</h2>
-        {% set pendingRequests = team.teamJoinRequests|filter(r => r.status == 'PENDING') %}
-        {% if pendingRequests|length > 0 %}
+        <h2 class="text-base font-medium text-gray-700 mb-3">
+          Pending Join Requests
+        </h2>
+        {% set pendingJoinRequests = team.pendingJoinRequests %}
+        {% if (pendingJoinRequests|length) > 0 %}
           <ul class="divide-y divide-gray-200">
-            {% for request in pendingRequests %}
+            {% for request in pendingJoinRequests %}
               <li class="py-2 flex items-center justify-between">
                 <span>
-                  {{ request.requester.firstName }} {{ request.requester.lastName }}
-                  <span class="text-gray-400 text-xs ml-2">{{ request.createdAt|ago }}</span>
+                  {{ request.requester.firstName }}
+                  {{ request.requester.lastName }}
+                  <span class="text-gray-400 text-xs ml-2">
+                    {{ request.createdAt|ago }}
+                  </span>
                 </span>
                 <div class="flex gap-2">
-                  <form method="POST" action="{{ path('app_join_request_accept', {id: request.id}) }}">
-                    <button type="submit" class="btn-style-primary btn-size-sm">Accept</button>
+                  <form method="POST"
+                    action="{{
+                    path(
+                      'app_join_request_decline',
+                      {
+                        id: request.id
+                      }
+                    )
+                    }}">
+                    <button type="submit" class="btn-style-ghost btn-size-md">
+                      Decline
+                    </button>
                   </form>
-                  <form method="POST" action="{{ path('app_join_request_decline', {id: request.id}) }}">
-                    <button type="submit" class="btn-style-destructive btn-size-sm">Decline</button>
+                  <form method="POST"
+                    action="{{
+                    path(
+                      'app_join_request_accept',
+                      {
+                        id: request.id
+                      }
+                    )
+                    }}">
+                    <button type="submit" class="btn-style-primary btn-size-md">
+                      Accept
+                    </button>
                   </form>
                 </div>
               </li>
             {% endfor %}
           </ul>
         {% else %}
-          <span class="text-gray-400 text-sm">No pending requests.</span>
+          <div class="focusable cursor-pointer relative w-full rounded-lg border-1 border-dashed border-gray-400 p-12 flex flex-col items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1"
+              stroke="currentColor"
+              class="mx-auto size-12 text-gray-400">
+              <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+            </svg>
+
+            <span class="mt-2 block text-sm font-medium text-gray-600">
+              No pending join requests
+            </span>
+            <span class="mt-1 block text-sm text-gray-400 max-w-sm text-pretty">
+              You will be notified here when users request to join your team.
+            </span>
+          </div>
         {% endif %}
       </div>
     {% endif %}
@@ -208,7 +267,14 @@
                 Cancel
               </button>
               <form method="POST"
-                action="{{ path('app_team_delete', { id: team.id }) }}">
+                action="{{
+                path(
+                  'app_team_delete',
+                  {
+                    id: team.id
+                  }
+                )
+                }}">
                 <input type="hidden"
                   name="_token"
                   value="{{ csrf_token('delete_team_' ~ team.id) }}" />
