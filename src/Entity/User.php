@@ -314,6 +314,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
     return $this;
   }
 
+  public function getUnreadNotificationsCount(): int {
+    return $this->appNotifications
+      ->filter(fn(AppNotification $notification) => !$notification->isRead())
+      ->count();
+  }
+
   /**
    * @return Collection<int, Comment>
    */

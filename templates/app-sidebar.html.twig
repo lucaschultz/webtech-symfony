@@ -29,12 +29,20 @@
           </li>
           <li>
             <a href="{{ path('app_notifications_list') }}"
-              class="{{
+              class="flex items-center gap-2 {{
               app.request.get('_route') == 'app_notifications_list'
                 ? 'sidebar-item-active'
                 : 'sidebar-item'
               }}">
-              Notifications
+              Notifications{% if app.user.unreadNotificationsCount > 0 %}
+                <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-medium {{
+                  app.request.get('_route') == 'app_notifications_list'
+                    ? 'bg-indigo-500 text-indigo-100'
+                    : 'bg-gray-200 text-gray-700'
+                  }}">
+                  {{ app.user.unreadNotificationsCount }}
+                </span>
+              {% endif %}
             </a>
           </li>
         </ul>
