@@ -2,6 +2,7 @@ apcu
 autoloaded
 axllent
 chromephp
+commandfor
 ctype
 dbname
 firephp
