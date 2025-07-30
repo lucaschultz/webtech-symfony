@@ -516,13 +516,20 @@
                   </td>
 
                   <td class="hidden px-3 py-4 text-sm whitespace-nowrap text-gray-600 lg:table-cell">
-                    {{ task.createdBy.firstName }} {{ task.createdBy.lastName }}
+                    {% if task.createdBy.id == app.user.id %}
+                      <span>You</span>
+                    {% else %}
+                      {{ task.createdBy.fullName }}
+                    {% endif %}
                   </td>
 
                   <td class="hidden px-3 py-4 text-sm whitespace-nowrap text-gray-600 lg:table-cell">
                     {% if task.assignedTo %}
-                      {{ task.assignedTo.firstName }}
-                      {{ task.assignedTo.lastName }}
+                      {% if task.assignedTo.id == app.user.id %}
+                        <span>You</span>
+                      {% else %}
+                        {{ task.assignedTo.fullName }}
+                      {% endif %}
                     {% else %}
                       <span class="text-gray-400">Unassigned</span>
                     {% endif %}

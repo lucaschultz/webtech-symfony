@@ -196,7 +196,11 @@
           Created by
         </dt>
         <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-          {{ task.createdBy.firstName }} {{ task.createdBy.lastName }}
+          {% if task.createdBy.id == app.user.id %}
+            <span>You</span>
+          {% else %}
+            {{ task.createdBy.fullName }}
+          {% endif %}
         </dd>
       </div>
       <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -205,9 +209,13 @@
         </dt>
         <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
           {% if task.assignedTo %}
-            {{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}
+            {% if task.assignedTo.id == app.user.id %}
+              <span>You</span>
+            {% else %}
+              {{ task.assignedTo.fullName }}
+            {% endif %}
           {% else %}
-            <span class="text-gray-400">Not assigned</span>
+            <span class="text-gray-400">Unassigned</span>
           {% endif %}
         </dd>
       </div>
