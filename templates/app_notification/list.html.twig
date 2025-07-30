@@ -3,7 +3,7 @@
 {% block content %}
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
     <div class="flex-auto max-w-2xl text-pretty">
-      <h1 class="text-base font-semibold text-gray-900">
+      <h1 class="text-base font-medium text-gray-900">
         Notifications
       </h1>
       <p class="mt-2 text-base text-gray-600">
@@ -34,21 +34,21 @@
 
   {% if notifications is empty %}
     <div class="mt-8">
-      <div class="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+      <div class="relative w-full rounded-lg border-1 border-dashed border-gray-400 p-12 flex flex-col items-center text-center">
         <svg xmlns="http://www.w3.org/2000/svg"
           fill="none"
           class="mx-auto size-12 text-gray-400"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          stroke-width="1"
           stroke="currentColor">
           <path stroke-linecap="round"
             stroke-linejoin="round"
             d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
         </svg>
-        <span class="mt-2 block text-sm font-semibold text-gray-900">
+        <span class="mt-2 block text-sm font-medium text-gray-600">
           No notifications yet
         </span>
-        <span class="mt-1 block text-sm text-gray-600">
+        <span class="mt-1 block max-w-sm text-sm text-gray-400">
           You'll see your notifications here when you receive them.
         </span>
       </div>
@@ -76,7 +76,7 @@
                     <div class="size-2 flex-shrink-0"></div>
                   {% endif %}
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm/6 font-semibold {{
+                    <p class="text-sm/6 font-medium {{
                       notification.isRead
                         ? 'text-gray-600'
                         : 'text-gray-900'
@@ -137,7 +137,7 @@
                 </div>
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3 id="dialog-title-delete-all"
-                    class="text-base font-semibold text-gray-900">
+                    class="text-base font-medium text-gray-900">
                     Delete All Notifications
                   </h3>
                   <div class="mt-2">
