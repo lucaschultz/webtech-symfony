@@ -5,9 +5,11 @@ namespace App\Entity;
 use App\Constant\TaskPriority;
 use App\Constant\TaskStatus;
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task {
@@ -43,6 +45,20 @@ class Task {
 
   #[ORM\ManyToOne(inversedBy: "assignedTasks")]
   private ?User $assignedTo = null;
+
+  #[
+    ORM\OneToMany(
+      mappedBy: "task",
+      targetEntity: Comment::class,
+      orphanRemoval: true,
+      cascade: ["persist", "remove"]
+    )
+  ]
+  private Collection $comments;
+
+  public function __construct() {
+    $this->comments = new ArrayCollection();
+  }
 
   public function getId(): ?int {
     return $this->id;
@@ -125,6 +141,31 @@ class Task {
   public function setAssignedTo(?User $assignedTo): static {
     $this->assignedTo = $assignedTo;
 
+    return $this;
+  }
+
+  /**
+   * @return Collection<int, Comment>
+   */
+  public function getComments(): Collection {
+    return $this->comments;
+  }
+
+  public function addComment(Comment $comment): self {
+    if (!$this->comments->contains($comment)) {
+      $this->comments[] = $comment;
+      $comment->setTask($this);
+    }
+    return $this;
+  }
+
+  public function removeComment(Comment $comment): self {
+    if ($this->comments->removeElement($comment)) {
+      // set the owning side to null (unless already changed)
+      if ($comment->getTask() === $this) {
+        $comment->setTask(null);
+      }
+    }
     return $this;
   }
 }
