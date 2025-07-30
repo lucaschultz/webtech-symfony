@@ -282,6 +282,15 @@ class TaskController extends AbstractController {
     RedirectService $redirectService,
     UserRepository $userRepository
   ): Response {
+    $teams = $entityManager->getRepository(Team::class)->findAll();
+    if (empty($teams)) {
+      $this->addFlash(
+        "warning",
+        "You need to be member of team before creating a task."
+      );
+      return $this->redirectToRoute("app_team_new");
+    }
+
     $task = new Task();
 
     $task->setCreatedBy($this->getUser());
