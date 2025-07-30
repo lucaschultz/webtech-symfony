@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\AppNotification;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -38,6 +39,42 @@ class AppNotificationRepository extends BaseRepository {
       ->setParameter("user", $user)
       ->getQuery()
       ->execute();
+  }
+
+  /**
+   * Notifies a single user
+   *
+   * @param User $user The User entity to notify
+   * @param string $message The notification message
+   * @param string $routeName The route name to generate the link
+   * @param array $routeParams Optional parameters for the route
+   *
+   * @return AppNotification The created notification
+   */
+  public function notifyUser(
+    User $user,
+    string $message,
+    string $routeName,
+    array $routeParams = []
+  ): AppNotification {
+    $entityManager = $this->getEntityManager();
+
+    $link = $this->urlGenerator->generate(
+      $routeName,
+      $routeParams,
+      UrlGeneratorInterface::ABSOLUTE_PATH
+    );
+
+    $notification = new AppNotification();
+    $notification->setMessage($message);
+    $notification->setLink($link);
+    $notification->setRecipient($user);
+    $notification->setIsRead(false);
+
+    $entityManager->persist($notification);
+    $entityManager->flush();
+
+    return $notification;
   }
 
   //    /**

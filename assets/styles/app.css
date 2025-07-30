@@ -54,7 +54,7 @@
   }
 
   .sidebar-item {
-    @apply text-sm/6 block whitespace-nowrap px-2 py-1 font-medium text-gray-700 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-indigo-500/5 focus-visible:bg-indigo-500/5;
+    @apply text-sm/6 block whitespace-nowrap px-2 py-1 font-medium text-gray-700 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-gray-500/5 focus-visible:bg-gray-500/5;
   }
 
   .sidebar-item-active {

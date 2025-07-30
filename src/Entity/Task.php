@@ -145,6 +145,13 @@ class Task {
   }
 
   /**
+   * @return User[]
+   */
+  public function getStakeholders(): array {
+    return array_filter([$this->getAssignedTo(), $this->getCreatedBy()]);
+  }
+
+  /**
    * @return Collection<int, Comment>
    */
   public function getComments(): Collection {

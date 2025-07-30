@@ -21,6 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class TaskController extends AbstractController {
+  private AppNotificationService $notificationService;
+
+  public function __construct(AppNotificationService $notificationService) {
+    $this->notificationService = $notificationService;
+  }
+
   #[Route("/tasks", name: "app_tasks_list")]
   public function list(
     Request $request,
@@ -73,47 +79,33 @@ class TaskController extends AbstractController {
     int $taskId,
     Request $request,
     EntityManagerInterface $em,
-    TaskRepository $taskRepository,
-    RedirectService $redirectService,
-    AppNotificationService $notificationService
+    TaskRepository $taskRepository
   ): Response {
     $task = $taskRepository->findOrFail($taskId);
 
     $comment = new Comment();
-    $form = $this->createForm(CommentType::class, $comment);
-
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
+    $commentForm = $this->createForm(CommentType::class, $comment);
+    $commentForm->handleRequest($request);
+    if ($commentForm->isSubmitted() && $commentForm->isValid()) {
       $comment->setAuthor($this->getUser());
       $comment->setTask($task);
 
       $em->persist($comment);
       $em->flush();
 
-      $recipients = [];
-      if ($task->getAssignedTo()) {
-        $recipients[] = $task->getAssignedTo();
-      }
-      if ($task->getCreatedBy()) {
-        $recipients[] = $task->getCreatedBy();
-      }
+      /** @var \App\Entity\User $user */
+      $user = $this->getUser();
 
-      $notificationService->notifyUsers(
-        $recipients,
-        'New comment on "' .
-          $task->getTitle() .
-          '" by ' .
-          $this->getUser()->getFirstName(),
+      $this->notificationService->notifyUsers(
+        $task->getStakeholders(),
+        'New comment on "' . $task->getTitle() . '" by ' . $user->getFullName(),
         $this->generateUrl("app_task_show", ["taskId" => $task->getId()]) .
           "#comment-" .
-          $comment->getId(),
-        $this->getUser() // Exclude the author of the comment
+          $comment->getId()
       );
 
       $this->addFlash("success", "Comment added successfully!");
 
-      // Redirect to avoid form resubmission
       return $this->redirect(
         $this->generateUrl("app_task_show", ["taskId" => $task->getId()]) .
           "#comment-" .
@@ -123,7 +115,7 @@ class TaskController extends AbstractController {
 
     return $this->render("task/show.html.twig", [
       "task" => $task,
-      "commentForm" => $form->createView(),
+      "commentForm" => $commentForm->createView(),
     ]);
   }
 
@@ -150,6 +142,18 @@ class TaskController extends AbstractController {
       $entityManager->flush();
 
       $this->addFlash("success", "Task status updated successfully");
+
+      /** @var \App\Entity\User $user */
+      $user = $this->getUser();
+
+      $this->notificationService->notifyUsers(
+        $task->getStakeholders(),
+        'Status of task "' .
+          $task->getTitle() .
+          '" updated by ' .
+          $user->getFullName(),
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()])
+      );
     } catch (\ValueError $e) {
       $this->addFlash("error", "Invalid status value");
     }
@@ -180,6 +184,18 @@ class TaskController extends AbstractController {
       $entityManager->flush();
 
       $this->addFlash("success", "Task priority updated successfully");
+
+      /** @var \App\Entity\User $user */
+      $user = $this->getUser();
+
+      $this->notificationService->notifyUsers(
+        $task->getStakeholders(),
+        'Priority of task "' .
+          $task->getTitle() .
+          '" updated by ' .
+          $user->getFullName(),
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()])
+      );
     } catch (\ValueError $e) {
       $this->addFlash("error", "Invalid priority value");
     }
@@ -211,6 +227,15 @@ class TaskController extends AbstractController {
 
       $this->addFlash("success", "Task updated successfully");
 
+      /** @var \App\Entity\User $user */
+      $user = $this->getUser();
+
+      $this->notificationService->notifyUsers(
+        $task->getStakeholders(),
+        'Task "' . $task->getTitle() . '" updated by ' . $user->getFullName(),
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()])
+      );
+
       return $redirectService->safeRedirect($request, "app_task_show", [
         "taskId" => $task->getId(),
       ]);
@@ -231,9 +256,19 @@ class TaskController extends AbstractController {
     RedirectService $redirectService
   ): Response {
     $task = $taskRepository->findOrFail($taskId);
+    $taskTitle = $task->getTitle();
 
     $entityManager->remove($task);
     $entityManager->flush();
+
+    /** @var \App\Entity\User $user */
+    $user = $this->getUser();
+
+    $this->notificationService->notifyUsers(
+      $task->getStakeholders(),
+      "Task \"{$taskTitle}\" deleted by " . $user->getFullName(),
+      $this->generateUrl("app_tasks_list")
+    );
 
     $this->addFlash("success", "Task deleted successfully");
 
@@ -315,6 +350,18 @@ class TaskController extends AbstractController {
 
       $this->addFlash("success", "Task created successfully");
 
+      /** @var \App\Entity\User $user */
+      $user = $this->getUser();
+
+      $this->notificationService->notifyUsers(
+        $task->getStakeholders(),
+        'New task "' .
+          $task->getTitle() .
+          '" created by ' .
+          $user->getFullName(),
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()])
+      );
+
       return $redirectService->safeRedirect($request, "app_task_show", [
         "taskId" => $task->getId(),
       ]);
@@ -373,11 +420,19 @@ class TaskController extends AbstractController {
 
     $this->addFlash(
       "success",
-      sprintf(
-        "Task assigned to %s %s successfully",
-        $user->getFirstName(),
-        $user->getLastName()
-      )
+      sprintf("Task assigned to %s successfully", $user->getFullName())
+    );
+
+    /** @var \App\Entity\User $user */
+    $user = $this->getUser();
+
+    $this->notificationService->notifyUsers(
+      $task->getStakeholders(),
+      'Assignment of task "' .
+        $task->getTitle() .
+        '" updated by ' .
+        $user->getFullName(),
+      $this->generateUrl("app_task_show", ["taskId" => $task->getId()])
     );
 
     return $redirectService->safeRedirect($request);

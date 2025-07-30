@@ -13,7 +13,6 @@ final class HomeController extends AbstractController {
       return $this->redirectToRoute("app_tasks_list");
     }
 
-    // Otherwise, show the normal homepage
     return $this->render("home/index.html.twig");
   }
 }
