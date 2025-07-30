@@ -16,19 +16,6 @@ class CommentType extends AbstractType {
     FormBuilderInterface $builder,
     array $options
   ): void {
-    // $builder
-    //     ->add('content')
-    //     ->add('createdAt')
-    //     ->add('updatedAt')
-    //     ->add('author', EntityType::class, [
-    //         'class' => User::class,
-    //         'choice_label' => 'id',
-    //     ])
-    //     ->add('task', EntityType::class, [
-    //         'class' => Task::class,
-    //         'choice_label' => 'id',
-    //     ])
-    // ;
     $builder->add("content", TextareaType::class, [
       "label" => "New Comment",
       "attr" => [

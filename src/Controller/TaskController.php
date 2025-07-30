@@ -11,6 +11,7 @@ use App\Form\TaskEditType;
 use App\Form\TaskNewType;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use App\Service\AppNotificationService;
 use App\Service\RedirectService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -72,7 +73,8 @@ class TaskController extends AbstractController {
     Request $request,
     EntityManagerInterface $em,
     TaskRepository $taskRepository,
-    RedirectService $redirectService
+    RedirectService $redirectService,
+    AppNotificationService $notificationService
   ): Response {
     $task = $taskRepository->findOrFail($taskId);
 
@@ -87,6 +89,25 @@ class TaskController extends AbstractController {
 
       $em->persist($comment);
       $em->flush();
+
+      $recipients = [];
+      if ($task->getAssignedTo()) {
+        $recipients[] = $task->getAssignedTo();
+      }
+      if ($task->getCreatedBy()) {
+        $recipients[] = $task->getCreatedBy();
+      }
+
+      $notificationService->notifyUsers(
+        $recipients,
+        'New comment on "' .
+          $task->getTitle() .
+          '" by ' .
+          $this->getUser()->getFirstName(),
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()]) .
+          "#comments",
+        $this->getUser() // Exclude the author of the comment
+      );
 
       $this->addFlash("success", "Comment added successfully!");
 
