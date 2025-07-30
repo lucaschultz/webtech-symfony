@@ -146,4 +146,59 @@ final class TeamController extends AbstractController {
       "TEAM_DELETE" => TeamVoter::DELETE,
     ]);
   }
+
+  #[Route("/teams/{id}/tasks", name: "app_team_tasks")]
+  public function teamTasks(
+    Team $team,
+    Request $request,
+    EntityManagerInterface $em
+  ): Response {
+    try {
+      $this->denyAccessUnlessGranted(TeamVoter::VIEW, $team);
+    } catch (AccessDeniedException $e) {
+      $this->addFlash("error", "You do not have permission to view this team.");
+      return $this->redirectToRoute("app_teams_list");
+    }
+
+    $sort = $request->query->get("sort", "createdAt");
+    $direction = $request->query->get("direction", "desc");
+
+    $allowedSortFields = [
+      "title",
+      "status",
+      "priority",
+      "deadline",
+      "createdAt",
+    ];
+    if (!in_array($sort, $allowedSortFields)) {
+      $sort = "createdAt";
+    }
+
+    if (!in_array($direction, ["asc", "desc"])) {
+      $direction = "desc";
+    }
+
+    $tasks = $em
+      ->getRepository("App\Entity\Task")
+      ->createQueryBuilder("t")
+      ->where("t.team = :team")
+      ->setParameter("team", $team)
+      ->leftJoin("t.createdBy", "cb")
+      ->addSelect("cb")
+      ->leftJoin("t.assignedTo", "at")
+      ->addSelect("at")
+      ->orderBy("t." . $sort, $direction)
+      ->getQuery()
+      ->getResult();
+
+    return $this->render("team/tasks.html.twig", [
+      "team" => $team,
+      "tasks" => $tasks,
+      "currentSort" => $sort,
+      "currentDirection" => $direction,
+      "TEAM_VIEW" => TeamVoter::VIEW,
+      "TEAM_EDIT" => TeamVoter::EDIT,
+      "TEAM_DELETE" => TeamVoter::DELETE,
+    ]);
+  }
 }

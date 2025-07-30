@@ -1,0 +1,717 @@
+{% extends 'app-layout.html.twig' %}
+
+{% block content %}
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
+    <div class="flex-auto max-w-2xl text-pretty">
+      <h1 class="text-base font-medium text-gray-900">
+        {{ team.name }} Tasks
+      </h1>
+      <p class="mt-2 text-base text-gray-600">
+        All tasks for the team "{{ team.name }}" are listed here. You can view,
+        edit, or delete tasks based on your permissions.
+      </p>
+    </div>
+
+    <a href="{{
+      path(
+        'app_task_new',
+        {
+          team: team.id,
+          redirectTo: app.request.uri
+        }
+      )
+      }}"
+      class="btn-style-primary btn-size-md">
+      New Task
+    </a>
+  </div>
+
+  {% if tasks is empty %}
+    <div class="mt-8">
+      <div class="relative w-full rounded-lg border-1 border-dashed border-gray-400 p-12 flex flex-col items-center text-center">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          class="mx-auto size-12 text-gray-400"
+          viewBox="0 0 24 24"
+          stroke-width="1"
+          stroke="currentColor"
+          class="size-6">
+          <path stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+        </svg>
+        <span class="mt-2 block text-sm font-medium text-gray-600">
+          No tasks yet
+        </span>
+        <span class="mt-1 block text-sm text-gray-400 max-w-sm text-pretty">
+          This team doesn't have any tasks yet. Create a new task to get
+          started.
+        </span>
+      </div>
+    </div>
+  {% else %}
+    <div class="mt-8 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th scope="col"
+                  class="py-3.5 pr-3 pl-4 text-left text-sm font-medium text-gray-900 sm:pl-0">
+                  <a href="{{
+                    path(
+                      'app_team_tasks',
+                      {
+                        id: team.id,
+                        sort: 'title',
+                        direction: currentSort == 'title'
+                          and currentDirection == 'asc'
+                          ? 'desc'
+                          : 'asc'
+                      }
+                    )
+                    }}"
+                    class="group rounded p-0.5 -ml-0.5 inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Task{% if currentSort == 'title' %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 bg-gray-950/5 text-gray-900 group-hover:bg-gray-950/7.5">
+                        {% if currentDirection == 'asc' %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 text-gray-600 invisible group-hover:visible group-focus:visible">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="size-4">
+                          <path fill-rule="evenodd"
+                            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  </a>
+                </th>
+                <th scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-medium text-gray-900">
+                  <a href="{{
+                    path(
+                      'app_team_tasks',
+                      {
+                        id: team.id,
+                        sort: 'status',
+                        direction: currentSort == 'status'
+                          and currentDirection == 'asc'
+                          ? 'desc'
+                          : 'asc'
+                      }
+                    )
+                    }}"
+                    class="group rounded p-0.5 -ml-0.5 inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Status{% if currentSort == 'status' %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 bg-gray-950/5 text-gray-900 group-hover:bg-gray-950/7.5">
+                        {% if currentDirection == 'asc' %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 text-gray-600 invisible group-hover:visible group-focus:visible">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="size-4">
+                          <path fill-rule="evenodd"
+                            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  </a>
+                </th>
+                <th scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-medium text-gray-900">
+                  <a href="{{
+                    path(
+                      'app_team_tasks',
+                      {
+                        id: team.id,
+                        sort: 'priority',
+                        direction: currentSort == 'priority'
+                          and currentDirection == 'asc'
+                          ? 'desc'
+                          : 'asc'
+                      }
+                    )
+                    }}"
+                    class="group rounded p-0.5 -ml-0.5 inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Priority{% if currentSort == 'priority' %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 bg-gray-950/5 text-gray-900 group-hover:bg-gray-950/7.5">
+                        {% if currentDirection == 'asc' %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 text-gray-600 invisible group-hover:visible group-focus:visible">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="size-4">
+                          <path fill-rule="evenodd"
+                            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  </a>
+                </th>
+
+                <th scope="col"
+                  class="hidden px-3 py-3.5 text-left text-sm font-medium text-gray-900 sm:table-cell">
+                  <a href="{{
+                    path(
+                      'app_team_tasks',
+                      {
+                        id: team.id,
+                        sort: 'deadline',
+                        direction: currentSort == 'deadline'
+                          and currentDirection == 'asc'
+                          ? 'desc'
+                          : 'asc'
+                      }
+                    )
+                    }}"
+                    class="group rounded whitespace-nowrap p-0.5 -ml-0.5 inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Due Date{% if currentSort == 'deadline' %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 bg-gray-950/5 text-gray-900 group-hover:bg-gray-950/7.5">
+                        {% if currentDirection == 'asc' %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 text-gray-600 invisible group-hover:visible group-focus:visible">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="size-4">
+                          <path fill-rule="evenodd"
+                            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  </a>
+                </th>
+
+                <th scope="col"
+                  class="hidden px-3 py-3.5 text-left text-sm font-medium text-gray-900 md:table-cell">
+                  <a href="{{
+                    path(
+                      'app_team_tasks',
+                      {
+                        id: team.id,
+                        sort: 'createdAt',
+                        direction: currentSort == 'createdAt'
+                          and currentDirection == 'asc'
+                          ? 'desc'
+                          : 'asc'
+                      }
+                    )
+                    }}"
+                    class="group rounded p-0.5 -ml-0.5 inline-flex focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Created{% if currentSort == 'createdAt' %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 bg-gray-950/5 text-gray-900 group-hover:bg-gray-950/7.5">
+                        {% if currentDirection == 'asc' %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                              d="M11.78 9.78a.75.75 0 0 1-1.06 0L8 7.06 5.28 9.78a.75.75 0 0 1-1.06-1.06l3.25-3.25a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06Z"
+                              clip-rule="evenodd" />
+                          </svg>
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      <span class="ml-2 flex-none flex items-center rounded-sm px-0.5 text-gray-600 invisible group-hover:visible group-focus:visible">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="size-4">
+                          <path fill-rule="evenodd"
+                            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  </a>
+                </th>
+
+                <th scope="col"
+                  class="hidden px-3 py-3.5 whitespace-nowrap text-left text-sm font-medium text-gray-900 lg:table-cell">
+                  Created By
+                </th>
+
+                <th scope="col"
+                  class="hidden px-3 py-3.5 whitespace-nowrap text-left text-sm font-medium text-gray-900 lg:table-cell">
+                  Assigned To
+                </th>
+
+                <th scope="col" class="relative py-3.5 pr-0 pl-3">
+                  <span class="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              {% for task in tasks %}
+                <tr>
+                  <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-0">
+                    <a href="{{
+                      path(
+                        'app_task_show',
+                        {
+                          taskId: task.id
+                        }
+                      )
+                      }}"
+                      class="hover:text-indigo-600 rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                      {{ task.title }}
+                    </a>
+                    <dl class="font-normal lg:hidden">
+                      <div class="sm:hidden">
+                        <dt class="sr-only">
+                          Due Date
+                        </dt>
+                        <dd class="mt-1 truncate text-gray-600">
+                          {% if task.deadline %}
+                            {{ task.deadline|date('M j, Y') }}
+                          {% else %}
+                            No deadline
+                          {% endif %}
+                        </dd>
+                      </div>
+                    </dl>
+                  </td>
+
+                  <td class="px-3 py-4 text-sm whitespace-nowrap">
+                    <el-dropdown class="dropdown">
+                      {% set statusColors = {
+                        TODO: 'text-gray-600 ring-gray-500/10',
+                        IN_PROGRESS: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+                        DONE: 'bg-green-50 text-green-700 ring-green-600/20'
+                      } %}
+                      <button class="inline-flex whitespace-nowrap cursor-pointer items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 {{
+                        statusColors[task.status.value]
+                        }}">
+                        {{ task.status.value == 'TODO'
+                          ? 'To Do'
+                          : task.status.value == 'IN_PROGRESS'
+                            ? 'In Progress'
+                            : 'Done' }}
+                      </button>
+                      <el-menu anchor="bottom start"
+                        popover
+                        class="dropdown-menu">
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_status',
+                            {
+                              taskId: task.id,
+                              status: 'TODO'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            To Do
+                          </button>
+                        </form>
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_status',
+                            {
+                              taskId: task.id,
+                              status: 'IN_PROGRESS'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            In Progress
+                          </button>
+                        </form>
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_status',
+                            {
+                              taskId: task.id,
+                              status: 'DONE'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            Done
+                          </button>
+                        </form>
+                      </el-menu>
+                    </el-dropdown>
+                  </td>
+
+                  <td class="px-3 py-4 text-sm whitespace-nowrap">
+                    <el-dropdown class="dropdown">
+                      <button class="inline-flex whitespace-nowrap cursor-pointer items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 text-gray-600 ring-gray-500/10">
+                        {{ task.priority.value == 'HIGH'
+                          ? 'High'
+                          : task.priority.value == 'MEDIUM'
+                            ? 'Medium'
+                            : 'Low' }}
+                      </button>
+                      <el-menu anchor="bottom start"
+                        popover
+                        class="dropdown-menu">
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_priority',
+                            {
+                              taskId: task.id,
+                              priority: 'HIGH'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            High
+                          </button>
+                        </form>
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_priority',
+                            {
+                              taskId: task.id,
+                              priority: 'MEDIUM'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            Medium
+                          </button>
+                        </form>
+                        <form method="POST"
+                          class="inline w-full"
+                          action="{{
+                          path(
+                            'app_task_priority',
+                            {
+                              taskId: task.id,
+                              priority: 'LOW'
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            Low
+                          </button>
+                        </form>
+                      </el-menu>
+                    </el-dropdown>
+                  </td>
+
+                  <td class="hidden px-3 py-4 text-sm whitespace-nowrap text-gray-600 sm:table-cell">
+                    {% if task.deadline %}
+                      {{ task.deadline|date('M j, Y') }}
+                    {% else %}
+                      <span class="text-gray-400">No deadline</span>
+                    {% endif %}
+                  </td>
+
+                  <td class="hidden px-3 py-4 text-sm whitespace-nowrap text-gray-600 md:table-cell">
+                    {{ task.createdAt|date('M j, Y') }}
+                  </td>
+
+                  <td class="hidden px-3 py-4 text-sm whitespace-nowrap text-gray-600 lg:table-cell">
+                    {{ task.createdBy.firstName }} {{ task.createdBy.lastName }}
+                  </td>
+
+                  <td class="px-3 py-4 text-sm whitespace-nowrap">
+                    <el-dropdown class="dropdown w-full">
+                      <button class="btn-style-ghost btn-size-sm">
+                        <div class="px-1">
+                          {% if not task.assignedTo %}
+                            <span class="text-gray-400">Unassigned</span>
+                          {% elseif task.assignedTo.id == app.user.id %}
+                            <span class="flex items-center">Yourself</span>
+                          {% else %}
+                            {{ task.assignedTo.firstName }}
+                            {{ task.assignedTo.lastName }}
+                          {% endif %}
+                        </div>
+                      </button>
+                      <el-menu anchor="bottom start"
+                        popover
+                        class="dropdown-menu">
+                        {% if (team.users|length) > 1 %}
+                          {# Options for other team members #}
+                          {% for user in team.users %}
+                            {% if user.id != app.user.id %}
+                              <form method="POST"
+                                class="inline"
+                                action="{{
+                                path(
+                                  'app_task_assign',
+                                  {
+                                    taskId: task.id,
+                                    userId: user.id,
+                                    redirectTo: app.request.uri
+                                  }
+                                )
+                                }}">
+                                <button type="submit" class="dropdown-item">
+                                  {{ user.firstName }} {{ user.lastName }}
+                                </button>
+                              </form>
+                            {% endif %}
+                          {% endfor %}
+                          <div class="border-t border-gray-200 -mx-1 my-1"></div>
+                        {% endif %}
+
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_assign',
+                            {
+                              taskId: task.id,
+                              userId: app.user.id,
+                              redirectTo: app.request.uri
+                            }
+                          )
+                          }}">
+                          <button type="submit" class="dropdown-item">
+                            Self assign
+                          </button>
+                        </form>
+
+                        <form method="POST"
+                          class="inline"
+                          action="{{
+                          path(
+                            'app_task_assign',
+                            {
+                              taskId: task.id,
+                              userId: 0,
+                              redirectTo: app.request.uri
+                            }
+                          )
+                          }}">
+                          <button type="submit"
+                            class="dropdown-item-destructive">
+                            Unassign
+                          </button>
+                        </form>
+                      </el-menu>
+                    </el-dropdown>
+                  </td>
+
+                  <td class="relative py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
+                    <el-dropdown class="dropdown">
+                      <button class="btn-style-ghost btn-size-sm">
+                        <span class="absolute -inset-2.5"></span>
+                        <span class="sr-only">Task options</span>
+                        <svg viewBox="0 0 20 20"
+                          fill="currentColor"
+                          data-slot="icon"
+                          aria-hidden="true"
+                          class="size-5">
+                          <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                        </svg>
+                      </button>
+                      <el-menu anchor="bottom end"
+                        popover
+                        class="dropdown-menu">
+                        <a href="{{
+                          path(
+                            'app_task_show',
+                            {
+                              taskId: task.id
+                            }
+                          )
+                          }}"
+                          class="dropdown-item">
+                          View<span class="sr-only">, {{ task.title }}</span>
+                        </a>
+                        <a href="{{
+                          path(
+                            'app_task_update',
+                            {
+                              taskId: task.id,
+                              redirectTo: app.request.uri
+                            }
+                          )
+                          }}"
+                          class="dropdown-item">
+                          Edit<span class="sr-only">, {{ task.title }}</span>
+                        </a>
+                        <button command="show-modal"
+                          commandfor="delete-dialog-{{ task.id }}"
+                          class="dropdown-item-destructive">
+                          Delete<span class="sr-only">, {{ task.title }}</span>
+                        </button>
+                      </el-menu>
+                    </el-dropdown>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# Delete Confirmation Modals - One for each task #}
+  {% for task in tasks %}
+    <el-dialog>
+      <dialog id="delete-dialog-{{ task.id }}"
+        aria-labelledby="dialog-title-{{ task.id }}"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop class="backdrop"></el-dialog-backdrop>
+        <div tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+          <el-dialog-panel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-100 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
+                  <svg viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    data-slot="icon"
+                    aria-hidden="true"
+                    class="size-6 text-red-600">
+                    <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 id="dialog-title-{{ task.id }}"
+                    class="text-base font-medium text-gray-900">
+                    Delete Task
+                  </h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-600">
+                      Are you sure you want to delete "{{ task.title }}"? This
+                      action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-gray-200 px-4 py-3 flex flex-col justify-end sm:flex-row sm:px-6 gap-2">
+              <button type="button"
+                autofocus
+                command="close"
+                commandfor="delete-dialog-{{ task.id }}"
+                class="btn-style-ghost btn-size-md">
+                Cancel
+              </button>
+              <form method="POST"
+                action="{{
+                path(
+                  'app_task_delete',
+                  {
+                    taskId: task.id,
+                    redirectTo: app.request.uri
+                  }
+                )
+                }}">
+                <button type="submit"
+                  class="btn-style-destructive btn-size-md w-full">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+  {% endfor %}
+{% endblock %}

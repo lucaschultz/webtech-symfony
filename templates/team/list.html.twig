@@ -112,62 +112,72 @@
                     {{ team.createdAt|date('M j, Y') }}
                   </td>
                   <td class="relative py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
-                    {% set hasTeamActions = is_granted(TEAM_VIEW, team)
-                      or is_granted(TEAM_EDIT, team)
-                      or is_granted(TEAM_DELETE, team)
-                    %}
-                    {% if hasTeamActions %}
-                      <el-dropdown class="dropdown">
-                        <button class="btn-style-ghost btn-size-sm">
-                          <span class="absolute -inset-2.5"></span>
-                          <span class="sr-only">Team options</span>
-                          <svg viewBox="0 0 20 20"
-                            fill="currentColor"
-                            data-slot="icon"
-                            aria-hidden="true"
-                            class="size-5">
-                            <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
-                          </svg>
-                        </button>
-                        <el-menu anchor="bottom end"
-                          popover
-                          class="dropdown-menu">
-                          {% if is_granted(TEAM_VIEW, team) %}
-                            <a href="{{
-                              path(
-                                'app_team_show',
-                                {
-                                  id: team.id
-                                }
-                              )
-                              }}"
-                              class="dropdown-item">
-                              View<span class="sr-only">, {{ team.name }}</span>
-                            </a>
+                    <el-dropdown class="dropdown">
+                      <button class="btn-style-ghost btn-size-sm">
+                        <span class="absolute -inset-2.5"></span>
+                        <span class="sr-only">Team options</span>
+                        <svg viewBox="0 0 20 20"
+                          fill="currentColor"
+                          data-slot="icon"
+                          aria-hidden="true"
+                          class="size-5">
+                          <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                        </svg>
+                      </button>
+                      <el-menu anchor="bottom end"
+                        popover
+                        class="dropdown-menu">
+                        {% if is_granted(TEAM_VIEW, team) %}
+                          <a href="{{
+                            path(
+                              'app_team_show',
+                              {
+                                id: team.id
+                              }
+                            )
+                            }}"
+                            class="dropdown-item">
+                            View<span class="sr-only">, {{ team.name }}</span>
+                          </a>
+                          <a href="{{
+                            path(
+                              'app_team_tasks',
+                              {
+                                id: team.id
+                              }
+                            )
+                            }}"
+                            class="dropdown-item">
+                            Tasks<span class="sr-only">, {{ team.name }}</span>
+                          </a>
+                          {% if
+                            is_granted(TEAM_EDIT, team)
+                              or is_granted(TEAM_DELETE, team) %}
+                            <div class="dropdown-separator"></div>
                           {% endif %}
-                          {% if is_granted(TEAM_EDIT, team) %}
-                            <a href="{{
-                              path(
-                                'app_team_edit',
-                                {
-                                  id: team.id
-                                }
-                              )
-                              }}"
-                              class="dropdown-item">
-                              Edit<span class="sr-only">, {{ team.name }}</span>
-                            </a>
-                          {% endif %}
-                          {% if is_granted(TEAM_DELETE, team) %}
-                            <button command="show-modal"
-                              commandfor="delete-dialog-{{ team.id }}"
-                              class="dropdown-item-destructive">
-                              Delete<span class="sr-only">, {{ team.name }}</span>
-                            </button>
-                          {% endif %}
-                        </el-menu>
-                      </el-dropdown>
-                    {% endif %}
+                        {% endif %}
+                        {% if is_granted(TEAM_EDIT, team) %}
+                          <a href="{{
+                            path(
+                              'app_team_edit',
+                              {
+                                id: team.id
+                              }
+                            )
+                            }}"
+                            class="dropdown-item">
+                            Edit<span class="sr-only">, {{ team.name }}</span>
+                          </a>
+                        {% endif %}
+                        {% if is_granted(TEAM_DELETE, team) %}
+                          <button command="show-modal"
+                            commandfor="delete-dialog-{{ team.id }}"
+                            class="dropdown-item-destructive">
+                            Delete<span class="sr-only">, {{ team.name }}</span>
+                          </button>
+                        {% endif %}
+                      </el-menu>
+                    </el-dropdown>
                   </td>
                 </tr>
               {% endfor %}

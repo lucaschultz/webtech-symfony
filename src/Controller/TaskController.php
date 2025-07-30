@@ -6,6 +6,7 @@ use App\Constant\TaskPriority;
 use App\Constant\TaskStatus;
 use App\Entity\Comment;
 use App\Entity\Task;
+use App\Entity\Team;
 use App\Form\CommentType;
 use App\Form\TaskEditType;
 use App\Form\TaskNewType;
@@ -240,13 +241,67 @@ class TaskController extends AbstractController {
   public function new(
     Request $request,
     EntityManagerInterface $entityManager,
-    RedirectService $redirectService
+    RedirectService $redirectService,
+    UserRepository $userRepository
   ): Response {
     $task = new Task();
 
     $task->setCreatedBy($this->getUser());
-    $task->setStatus(TaskStatus::Todo);
-    $task->setPriority(TaskPriority::Medium);
+
+    if ($request->query->has("title")) {
+      $task->setTitle($request->query->get("title"));
+    }
+
+    if ($request->query->has("description")) {
+      $task->setDescription($request->query->get("description"));
+    }
+
+    if ($request->query->has("team")) {
+      $teamId = $request->query->getInt("team");
+      $team = $entityManager->getRepository(Team::class)->find($teamId);
+      if ($team) {
+        $task->setTeam($team);
+      }
+    }
+
+    if ($request->query->has("assignedTo")) {
+      $userId = $request->query->getInt("assignedTo");
+      $user = $userRepository->find($userId);
+      if ($user) {
+        $task->setAssignedTo($user);
+      }
+    }
+
+    if ($request->query->has("status")) {
+      try {
+        $status = TaskStatus::from($request->query->get("status"));
+        $task->setStatus($status);
+      } catch (\ValueError) {
+        $task->setStatus(TaskStatus::Todo);
+      }
+    } else {
+      $task->setStatus(TaskStatus::Todo);
+    }
+
+    if ($request->query->has("priority")) {
+      try {
+        $priority = TaskPriority::from($request->query->get("priority"));
+        $task->setPriority($priority);
+      } catch (\ValueError) {
+        $task->setPriority(TaskPriority::Medium);
+      }
+    } else {
+      $task->setPriority(TaskPriority::Medium);
+    }
+
+    if ($request->query->has("deadline")) {
+      try {
+        $deadline = new \DateTime($request->query->get("deadline"));
+        $task->setDeadline($deadline);
+      } catch (\Exception) {
+        // Invalid date format, ignore
+      }
+    }
 
     $form = $this->createForm(TaskNewType::class, $task);
     $form->handleRequest($request);
@@ -265,5 +320,63 @@ class TaskController extends AbstractController {
     return $this->render("task/new.html.twig", [
       "form" => $form,
     ]);
+  }
+
+  #[
+    Route(
+      "/tasks/{taskId}/assign/{userId}",
+      name: "app_task_assign",
+      methods: ["POST"],
+      requirements: ["taskId" => "\d+", "userId" => "\d+"]
+    )
+  ]
+  public function assignTask(
+    Request $request,
+    int $taskId,
+    int $userId,
+    TaskRepository $taskRepository,
+    UserRepository $userRepository,
+    EntityManagerInterface $entityManager,
+    RedirectService $redirectService
+  ): Response {
+    $task = $taskRepository->findOrFail($taskId);
+
+    if ($userId === 0) {
+      $task->setAssignedTo(null);
+      $entityManager->flush();
+      $this->addFlash("success", "Task unassigned successfully");
+      return $redirectService->safeRedirect($request);
+    }
+
+    $user = $userRepository->find($userId);
+
+    if (!$user) {
+      $this->addFlash("error", "User not found");
+      return $redirectService->safeRedirect($request);
+    }
+
+    if (
+      !$task
+        ->getTeam()
+        ->getUsers()
+        ->contains($user)
+    ) {
+      $this->addFlash("error", "User is not a member of this team");
+      return $redirectService->safeRedirect($request);
+    }
+
+    $task->setAssignedTo($user);
+    $entityManager->flush();
+
+    $this->addFlash(
+      "success",
+      sprintf(
+        "Task assigned to %s %s successfully",
+        $user->getFirstName(),
+        $user->getLastName()
+      )
+    );
+
+    return $redirectService->safeRedirect($request);
   }
 }

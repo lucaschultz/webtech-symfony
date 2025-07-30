@@ -1,0 +1,112 @@
+<div class="flex grow flex-col gap-y-2 overflow-y-auto border-r border-gray-200 bg-gray-100 px-6">
+  {% include 'app-logo.html.twig' %}
+  <nav class="flex flex-1 flex-col">
+    <ul role="list" class="flex flex-1 flex-col gap-y-7">
+      <li class="space-y-1.5">
+        <div class="text-xs/6 font-medium text-gray-400">
+          Pages
+        </div>
+        <ul role="list" class="-mx-2 space-y-1.5">
+          <li>
+            <a href="{{ path('app_tasks_list') }}"
+              class="{{
+              app.request.get('_route') == 'app_tasks_list'
+                ? 'sidebar-item-active'
+                : 'sidebar-item'
+              }}">
+              Tasks
+            </a>
+          </li>
+          <li>
+            <a href="{{ path('app_teams_list') }}"
+              class="{{
+              app.request.get('_route') == 'app_teams_list'
+                ? 'sidebar-item-active'
+                : 'sidebar-item'
+              }}">
+              Teams
+            </a>
+          </li>
+          <li>
+            <a href="{{ path('app_notifications_list') }}"
+              class="{{
+              app.request.get('_route') == 'app_notifications_list'
+                ? 'sidebar-item-active'
+                : 'sidebar-item'
+              }}">
+              Notifications
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="space-y-1.5">
+        <div class="text-xs/6 font-medium text-gray-400">
+          Your teams
+        </div>
+        <ul role="list" class="-mx-2 space-y-1.5">
+          {% if (app.user.teams|length) == 0 %}
+            <li>
+              <a href="{{ path('app_team_create') }}" class="sidebar-item">
+                <span class="truncate">Create a team</span>
+              </a>
+            </li>
+          {% endif %}
+          {% for team in app.user.teams %}
+            <li>
+              <a href="{{
+                path(
+                  'app_team_tasks',
+                  {
+                    id: team.id
+                  }
+                )
+                }}"
+                class="{{
+                app.request.get('_route') == 'app_team_tasks'
+                  and app.request.get('id') == team.id
+                  ? 'sidebar-item-active'
+                  : 'sidebar-item'
+                }}">
+                <span class="truncate">{{ team.name }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+
+      <li class="-mx-6 mt-auto hidden lg:block">
+        <el-dropdown class="dropdown">
+          <button class="flex items-center gap-x-4 px-6 py-3 text-sm font-medium text-gray-900 hover:bg-gray-950/7.5 w-full focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-indigo-600">
+            <img src="https://ui-avatars.com/api/?name={{ app.user.firstName|default(
+                'U'
+              ) }}+{{ app.user.lastName|default(
+                'ser'
+              ) }}&background=4f46e5&color=fff"
+              alt="{{ app.user.firstName|default('User') }}"
+              class="size-8 rounded-full bg-gray-50" />
+            <span>
+              {{ app.user.firstName|default('User') }}
+              {{ app.user.lastName|default('') }}
+            </span>
+            <svg class="size-4 ml-auto" viewBox="0 0 20 20" fill="none">
+              <path d="M6 8l4 4 4-4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          <el-menu anchor="top start" popover class="dropdown-menu">
+            <form id="logout-form-sidebar"
+              action="{{ path('app_logout') }}"
+              method="post">
+              <button type="submit" class="dropdown-item-destructive">
+                Logout
+              </button>
+            </form>
+          </el-menu>
+        </el-dropdown>
+      </li>
+    </ul>
+  </nav>
+</div>
