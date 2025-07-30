@@ -105,16 +105,19 @@ class TaskController extends AbstractController {
           '" by ' .
           $this->getUser()->getFirstName(),
         $this->generateUrl("app_task_show", ["taskId" => $task->getId()]) .
-          "#comments",
+          "#comment-" .
+          $comment->getId(),
         $this->getUser() // Exclude the author of the comment
       );
 
       $this->addFlash("success", "Comment added successfully!");
 
       // Redirect to avoid form resubmission
-      return $redirectService->safeRedirect($request, "app_task_show", [
-        "taskId" => $task->getId(),
-      ]);
+      return $this->redirect(
+        $this->generateUrl("app_task_show", ["taskId" => $task->getId()]) .
+          "#comment-" .
+          $comment->getId()
+      );
     }
 
     return $this->render("task/show.html.twig", [

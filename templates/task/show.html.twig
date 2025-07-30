@@ -155,10 +155,10 @@
     {% else %}
       <ul class="divide-y divide-gray-200 mb-6">
         {% for comment in task.comments|sort((a, b) => a.createdAt <=> b.createdAt) %}
-          <li class="py-3">
+          <li id="comment-{{ comment.id }}" class="py-3">
             <div class="flex items-center text-sm text-gray-600 mb-1">
               <span class="font-medium">{{ comment.author.firstName ~ ' ' ~ comment.author.lastName }}</span>
-              <span class="ml-3 text-gray-400 text-xs">{{ comment.createdAt|date('Y-m-d H:i') }}</span>
+              <span class="ml-3 text-gray-400 text-xs">{{ comment.createdAt|ago }}</span>
             </div>
             <div class="text-base text-gray-900 whitespace-pre-line">{{ comment.content|e }}</div>
           </li>
@@ -174,7 +174,7 @@
           'class': 'block w-full rounded-md bg-white/50 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6'
         }
       }) }}
-      <div class="flex justify-end">
+      <div class="flex justify-end py-4">
         <button type="submit" class="btn-style-primary btn-size-md">Add Comment</button>
       </div>
     {{ form_end(commentForm) }}
