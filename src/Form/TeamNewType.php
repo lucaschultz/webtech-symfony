@@ -23,7 +23,7 @@ class TeamNewType extends AbstractType {
       ->add("name", TextType::class, [
         "label" => "Team Name",
         "attr" => [
-          "placeholder" => "Enter tem title",
+          "placeholder" => "Enter team title",
         ],
       ])
       ->add("description", TextareaType::class, [
