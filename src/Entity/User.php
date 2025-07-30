@@ -269,7 +269,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   /**
    * @var Collection<int, TeamJoinRequest>
    */
-  #[ORM\OneToMany(targetEntity: TeamJoinRequest::class, mappedBy: 'requester')]
+  #[ORM\OneToMany(targetEntity: TeamJoinRequest::class, mappedBy: "requester")]
   private Collection $teamJoinRequests;
 
   /** @return Collection<int, Team> */
@@ -357,30 +357,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
   /**
    * @return Collection<int, TeamJoinRequest>
    */
-  public function getTeamJoinRequests(): Collection
-  {
-      return $this->teamJoinRequests;
+  public function getTeamJoinRequests(): Collection {
+    return $this->teamJoinRequests;
   }
 
-  public function addTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
-  {
-      if (!$this->teamJoinRequests->contains($teamJoinRequest)) {
-          $this->teamJoinRequests->add($teamJoinRequest);
-          $teamJoinRequest->setRequester($this);
-      }
+  public function addTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static {
+    if (!$this->teamJoinRequests->contains($teamJoinRequest)) {
+      $this->teamJoinRequests->add($teamJoinRequest);
+      $teamJoinRequest->setRequester($this);
+    }
 
-      return $this;
+    return $this;
   }
 
-  public function removeTeamJoinRequest(TeamJoinRequest $teamJoinRequest): static
-  {
-      if ($this->teamJoinRequests->removeElement($teamJoinRequest)) {
-          // set the owning side to null (unless already changed)
-          if ($teamJoinRequest->getRequester() === $this) {
-              $teamJoinRequest->setRequester(null);
-          }
+  public function removeTeamJoinRequest(
+    TeamJoinRequest $teamJoinRequest
+  ): static {
+    if ($this->teamJoinRequests->removeElement($teamJoinRequest)) {
+      // set the owning side to null (unless already changed)
+      if ($teamJoinRequest->getRequester() === $this) {
+        $teamJoinRequest->setRequester(null);
       }
+    }
 
-      return $this;
+    return $this;
   }
 }

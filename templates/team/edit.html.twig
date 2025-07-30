@@ -16,12 +16,20 @@
   </div>
 
   <div class="mt-8">
-    {{ form_start(form, {
-      'action': path('app_team_edit', {
-        'id': team.id,
-        'redirectTo': app.request.query.get('redirectTo')
-      })
-    }) }}
+    {{
+      form_start(
+        form,
+        {
+          action: path(
+            'app_team_edit',
+            {
+              id: team.id,
+              redirectTo: app.request.query.get('redirectTo')
+            }
+          )
+        }
+      )
+    }}
     {{ form_errors(form) }}
 
     <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
@@ -50,14 +58,19 @@
     </div>
 
     <div class="mt-8 flex items-center justify-end gap-x-6">
-      <a href="{% if app.request.query.get('redirectTo') %}{{ app.request.query.get('redirectTo') }}{% else %}{{ path('app_team_show', {'id': team.id}) }}{% endif %}"
+      <a href="{{
+        app.request.query.get('redirectTo')
+          ?? path(
+            'app_team_show',
+            {
+              id: team.id
+            }
+          )
+        }}"
         class="btn-style-ghost btn-size-md">
         Cancel
       </a>
-      <button type="submit"
-        class="btn-style-primary btn-size-md">
-        Save
-      </button>
+      <button type="submit" class="btn-style-primary btn-size-md">Save</button>
     </div>
 
     {{ form_end(form) }}
