@@ -1,4 +1,5 @@
 apcu
+Assaf
 autoloaded
 axllent
 chromephp
@@ -12,6 +13,7 @@ hashers
 healthcheck
 hotwired
 importmap
+Inhalt
 inversed
 isready
 javascripts
@@ -25,6 +27,7 @@ phpdocumentor
 phpstan
 phpunit
 PHPUNIT
+presenterm
 savepoints
 setval
 stof

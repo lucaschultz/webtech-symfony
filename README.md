@@ -99,7 +99,7 @@ pnpm run spellcheck:baseline
 - [Symfony Forms](https://symfony.com/doc/current/forms.html) used for forms in
   the application.
 - [Tailwind Form Theme](https://symfony.com/doc/current/form/tailwindcss.html)
-  we might wanna use this to style the forms?
+  we based our form styles on this theme.
 - [TailwindUI](https://tailwindcss.com/plus/ui-blocks/marketing) used as
   inspiration for the user interface.
 - [Symfony Database Docs](https://symfony.com/doc/current/doctrine.html) used
@@ -107,10 +107,24 @@ pnpm run spellcheck:baseline
 - [Symfony User Authentication](https://symfony.com/doc/current/security.html#authenticating-users)
   used for user authentication and registration.
 - [Symfony Notifications](https://symfony.com/doc/current/session.html#installation)
-  used for the notification system.
+  inspiration for the notification system.
 - [Symfony Relations](https://symfony.com/doc/current/doctrine/associations.html)
-  extensively used for the database schema.
+  used for the database schema.
 - [Doctrine Extensions](https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html)
   used e.g. for automatic time stamps.
-- [Symfony Translation Docs](https://symfony.com/doc/current/translation.html)
-  used for translations in the application.
+
+## Presentation
+
+The project concludes in a 30-minute session which will mostly focus on
+presenting the app and code structure. However, we made some very basic slides
+for the introduction and conclusion. You can find the slides in the
+[`PRESENTATION.md`](./PRESENTATION.md) file. The slides are written in markdown
+and will be presented using
+[presenterm](https://mfontanini.github.io/presenterm/introduction.html), a CLI
+tool to render markdown presentations in the terminal. To view the slides,
+[install presenterm](https://mfontanini.github.io/presenterm/install.html) and
+run the following command at the root of the project:
+
+```bash
+presenterm PRESENTATION.md
+```

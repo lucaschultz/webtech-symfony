@@ -3,3 +3,4 @@ var/
 node_modules/
 public/build/
 pnpm-lock.yaml
+PRESENTATION.md

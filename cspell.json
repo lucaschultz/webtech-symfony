@@ -16,6 +16,7 @@
     "node_modules",
     "vendor",
     "var",
-    "translations"
+    "translations",
+    "PRESENTATION.md"
   ]
 }
