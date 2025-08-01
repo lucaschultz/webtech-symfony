@@ -56,6 +56,33 @@ Should
 
 <!-- end_slide -->
 
+Aufgaben
+--------
+
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+Ahmad
+-----
+
+- User Authentication + Registration (Ahmad)
+- Team CRUD + Join (Ahmad)
+- Comment CR (Ahmad)
+
+<!-- column: 1 -->
+
+Luca
+----
+
+- Project Setup
+- Task CRUD + Assignments
+- Notification CR
+- Dashboard Page
+
+<!-- reset_layout -->
+
+<!-- end_slide -->
+
 Fazit
 -----
 

@@ -3,6 +3,7 @@
 We isolated the following tasks to complete the project. Each task is assigned
 to a team member:
 
+- [x] Project Setup (Luca)
 - [x] User Entity + Authentication + Registration (Ahmad)
 - [x] Team Entities + CRUD/Join (Ahmad)
 - [x] Task Entities + CRUD + Assignments (Luca)
